@@ -1,0 +1,556 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+% Define new environments for examples and solutions
+\newtheorem{example}{Example}
+\newenvironment{solution}{\noindent\textbf{Solution:}}{\hfill$\square$}
+
+% Page settings
+\geometry{
+    a4paper,
+    total={170mm,257mm},
+    left=20mm,
+    top=20mm,
+}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Stochastic Processes Lecture Notes}
+\fancyhead[R]{Chapter 2 - Fall 2024}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\href{https://stoch-sut.github.io/}{Course Website}}
+
+% Title formatting
+\title{
+    \vspace{-2cm}
+    \LARGE{Stochastic Processes} \\
+    \vspace{0.5cm}
+    \Large{Lecture Notes} \\
+    \vspace{0.5cm}
+    \normalsize{Chapter 2: First and Higher Order Statistics of Stochastic Processes}
+}
+\author{
+    Payam Taebi \\
+    \vspace{0.2cm}
+}
+\date{
+    Fall 2024 \\
+    \vspace{0.2cm}
+    \href{https://stoch-sut.github.io/}{https://stoch-sut.github.io/}
+}
+
+% Section formatting for better readability
+\titleformat{\section}
+  {\Large\bfseries}{\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\large\bfseries}{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\bfseries}{\thesubsubsection}{1em}{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+This chapter explores the first and higher-order statistics of stochastic processes. We will delve into distribution functions, autocorrelation, autocovariance, and the properties of stationary processes. Understanding these concepts is essential for analyzing and modeling stochastic systems effectively.
+
+\section{Stochastic Processes}
+\subsection{Definition}
+\begin{itemize}
+    \item Let \( \xi \) denote the random outcome of an experiment.
+    \item To every such outcome \( \xi \), a waveform is assigned.
+    \item The collection of such waveforms or sample paths forms a stochastic process.
+    \item The set of \( \xi \) and the time index \( t \) can be continuous or discrete (countably infinite or finite).
+\end{itemize}
+
+\[
+X(t, \xi)
+\]
+
+\subsection{Interpretation}
+\begin{itemize}
+    \item For fixed \( \xi \) (the set of all experimental outcomes), \( X(t, \xi) \) is a specific time function.
+    \item For fixed \( t \), \( X(t, \xi) \) is a random variable (RV).
+    \item The ensemble of all such realizations over time represents the stochastic process \( X(t) \).
+\end{itemize}
+
+\[
+X(t, \xi), \quad t \in T, \quad \xi \in \Xi
+\]
+
+\section{First Order Statistics of \( X(t) \)}
+\subsection{Distribution Function}
+\begin{itemize}
+    \item If \( X(t) \) is a stochastic process, then for fixed \( t \), \( X(t) \) represents a random variable.
+    \item Its distribution function is given by:
+    \[
+    F_X(x,t) = P\{X(t) \leq x\}
+    \]
+    \item Notice that \( F_X(x,t) \) depends on \( t \), since for a different \( t \), we obtain a different random variable.
+    \item \( f_X(x,t) \) represents the first-order probability density function (pdf) of the process \( X(t) \).
+\end{itemize}
+
+\[
+F_X(x,t) = P\{X(t) \leq x\} = \int_{-\infty}^x f_X(x', t) \, dx'
+\]
+
+\subsection{Joint Distribution Function}
+\begin{itemize}
+    \item For \( t = t_1 \) and \( t = t_2 \), \( X(t) \) represents two different random variables \( X_1 = X(t_1) \) and \( X_2 = X(t_2) \) respectively.
+    \item Their joint distribution is given by \( F_{X_1, X_2}(x_1, x_2, t_1, t_2) = P\{X(t_1) \leq x_1, X(t_2) \leq x_2\} \).
+    \item \( f_{X_1, X_2}(x_1, x_2, t_1, t_2) \) represents the second-order density function of the process \( X(t) \).
+\end{itemize}
+
+\[
+f_{X_1, X_2}(x_1, x_2, t_1, t_2) = \frac{\partial^2 F_{X_1, X_2}(x_1, x_2)}{\partial x_1 \partial x_2}
+\]
+
+\subsection{Nth Order Density Function}
+\begin{itemize}
+    \item Similarly, \( f_{X_1, X_2, \ldots, X_n}(x_1, x_2, \ldots, x_n, t_1, t_2, \ldots, t_n) \) represents the \( n \)-th order density function of the process \( X(t) \).
+    \item Complete specification of the stochastic process \( X(t) \) requires the knowledge of \( f_{X_1, X_2, \ldots, X_n}(x_1, x_2, \ldots, x_n, t_1, t_2, \ldots, t_n) \) for all \( t_1, t_2, \ldots, t_n \) and for all \( n \).
+\end{itemize}
+
+\[
+f_{X_1, X_2, \ldots, X_n}(x_1, x_2, \ldots, x_n, t_1, t_2, \ldots, t_n) = \frac{\partial^n F_{X_1, X_2, \ldots, X_n}(x_1, x_2, \ldots, x_n)}{\partial x_1 \partial x_2 \ldots \partial x_n}
+\]
+
+\section{Mean, Autocorrelation, and Autocovariance of \( X(t) \)}
+\subsection{Mean (Expected Value)}
+\[
+\mu_X(t) = E\{X(t)\} = \int_{-\infty}^{\infty} x \, f_X(x, t) \, dx
+\]
+\begin{itemize}
+    \item Represents the mean value of the process \( X(t) \).
+    \item In general, the mean of a process can depend on the time index \( t \).
+\end{itemize}
+
+\subsection{Autocorrelation Function}
+\[
+R_{XX}(t_1, t_2) = E\{X(t_1) X(t_2)\} = \int_{-\infty}^{\infty} \int_{-\infty}^{\infty} x_1 x_2 \, f_{X(t_1), X(t_2)}(x_1, x_2) \, dx_1 dx_2
+\]
+\begin{itemize}
+    \item Represents the interrelationship between the random variables \( X(t_1) \) and \( X(t_2) \) generated from the process \( X(t) \).
+\end{itemize}
+
+\subsection{Autocovariance Function}
+\[
+C_{XX}(t_1, t_2) = R_{XX}(t_1, t_2) - \mu_X(t_1) \mu_X(t_2)
+\]
+\begin{itemize}
+    \item Represents the autocovariance function of the process \( X(t) \).
+\end{itemize}
+
+\section{Properties of Autocorrelation Function for W.S.S Processes}
+\begin{enumerate}[label=(\arabic*)]
+    \item \( R_{XX}(\tau) = R_{XX}(-\tau) \) \hfill (Even Function)
+    \item \( R_{XX}(0) \geq R_{XX}(\tau) \) \hfill (Non-negative Definite)
+    \item \( R_{XX}(\tau) \leq R_{XX}(0) \) \hfill (Maximum at Zero Lag)
+\end{enumerate}
+
+\section{Stationary Stochastic Processes}
+\subsection{Definition}
+\begin{itemize}
+    \item Stationary processes exhibit statistical properties that are invariant to shifts in the time index.
+    \item For example, second-order stationarity implies that the statistical properties of the pairs \( \{X(t_1), X(t_2)\} \) and \( \{X(t_1 + c), X(t_2 + c)\} \) are the same for any constant \( c \).
+    \item Similarly, first-order stationarity implies that the statistical properties of \( X(t_i) \) and \( X(t_i + c) \) are the same for any constant \( c \).
+\end{itemize}
+
+\subsection{Strict-Sense Stationary (S.S.S) Processes}
+\begin{itemize}
+    \item In strict terms, the statistical properties are governed by the joint probability density function.
+    \item A process \( X(t) \) is \( n \)-th order strict-sense stationary if, for any shift \( c \):
+    \[
+    f_{X(t_1), X(t_2), \ldots, X(t_n)}(x_1, x_2, \ldots, x_n) = f_{X(t_1 + c), X(t_2 + c), \ldots, X(t_n + c)}(x_1, x_2, \ldots, x_n)
+    \]
+\end{itemize}
+
+\subsection{Wide-Sense Stationary (W.S.S) Processes}
+\begin{itemize}
+    \item A process \( X(t) \) is said to be Wide-Sense Stationary if:
+    \begin{enumerate}[label=(i)]
+        \item The mean is a constant: \( E\{X(t)\} = \mu_X \)
+        \item The autocorrelation function depends only on the difference between the time indices: \( R_{XX}(t_1, t_2) = R_{XX}(\tau) \) where \( \tau = t_1 - t_2 \)
+    \end{enumerate}
+    \item \textbf{Key Points:}
+    \begin{itemize}
+        \item Strict-sense stationarity always implies wide-sense stationarity.
+        \item The converse is not true in general, except for Gaussian processes.
+        \item In Gaussian processes, wide-sense stationarity implies strict-sense stationarity.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Characteristics of Gaussian Processes}
+\begin{itemize}
+    \item If \( X(t) \) is a Gaussian process, then by definition, \( \{X(t_i)\} \) are jointly Gaussian random variables for any set \( \{t_i\} \).
+    \item The joint characteristic function for Gaussian processes depends only on the mean and covariance, making verification of strict-sense stationarity straightforward.
+\end{itemize}
+
+\section{Autocorrelation Function}
+\subsection{Properties for W.S.S Processes}
+\begin{enumerate}[label=(\arabic*)]
+    \item \( R_{XX}(\tau) = R_{XX}(-\tau) \) \hfill (Even Function)
+    \item \( R_{XX}(0) = E\{X(t)^2\} \)
+    \[
+    C_{XX}(0) = R_{XX}(0) - \mu_X^2
+    \]
+    \item Cauchy-Schwarz Inequality:
+    \[
+    R_{XX}(\tau)^2 \leq R_{XX}(0)^2
+    \]
+\end{enumerate}
+
+\section{Cross-Correlation and Marginal Distributions}
+\subsection{Cross-Correlation Function}
+\[
+R_{XY}(t_1, t_2) = E\{X(t_1) Y(t_2)\}
+\]
+\[
+C_{XY}(t_1, t_2) = R_{XY}(t_1, t_2) - \mu_X(t_1) \mu_Y(t_2)
+\]
+\begin{itemize}
+    \item Cross-correlation measures the relationship between two different processes or different time instances.
+    \item For independent processes:
+    \[
+    R_{XY}(t_1, t_2) = \mu_X(t_1) \mu_Y(t_2)
+    \]
+    \item Covariance:
+    \[
+    C_{XY}(t_1, t_2) = 0 \quad \text{(for independent processes)}
+    \]
+\end{itemize}
+
+\subsection{Marginal Distributions}
+\[
+f_{X(t)}(x_1; t_1) = \int_{-\infty}^{\infty} f_{X(t_1), X(t_2)}(x_1, x_2; t_1, t_2) \, dx_2
+\]
+\[
+f_{Y(t)}(y_1; t_1) = \int_{-\infty}^{\infty} f_{X(t_1), Y(t_2)}(x_1, y_2; t_1, t_2) \, dy_2
+\]
+\begin{itemize}
+    \item For independent processes \( X(t) \) and \( Y(t) \):
+    \[
+    f_{X(t), Y(t)}(x, y; t, t) = f_X(x; t) f_Y(y; t)
+    \]
+    \item Thus, \( R_{XY}(t_1, t_2) = \mu_X(t_1) \mu_Y(t_2) \)
+\end{itemize}
+
+\section{Characteristic Function}
+\subsection{Definition}
+The characteristic function \( \phi_X(\omega) \) of a random variable \( X \) is defined as:
+\[
+\phi_X(\omega) = \mathcal{F}\{f_X\}(\omega) = E\{e^{j\omega X}\} = \int_{-\infty}^{\infty} e^{j\omega x} f_X(x) \, dx
+\]
+where \( j \) is the imaginary unit and \( \omega \) is a real number.
+
+\section{Examples}
+
+\subsection{Example 1: Integrator}
+\begin{example}
+Let
+\[
+Z = \int_{-T}^{T} X(t) \, dt
+\]
+Compute \( E\{Z\} \) and \( R_{XX}(t_1, t_2) \).
+\end{example}
+\begin{solution}
+\begin{align*}
+E\{Z\} &= E\left\{\int_{-T}^{T} X(t) \, dt\right\} = \int_{-T}^{T} E\{X(t)\} \, dt = \int_{-T}^{T} \mu_X(t) \, dt = 2T \mu_X \\
+R_{XX}(t_1, t_2) &= E\{X(t_1) X(t_2)\} = E\{(A t_1 + b)(A t_2 + b)\} \\
+&= E\{A^2 t_1 t_2 + A b t_1 + A b t_2 + b^2\} \\
+&= t_1 t_2 E\{A^2\} + b t_1 E\{A\} + b t_2 E\{A\} + b^2 \\
+&= t_1 t_2 \cdot 1 + b t_1 \cdot 0 + b t_2 \cdot 0 + b^2 \\
+&= t_1 t_2 + b^2
+\end{align*}
+\end{solution}
+
+\subsection{Example 2: Oscillatory Process}
+\begin{example}
+Consider the stochastic process
+\[
+X(t) = a \cos(\omega_0 t) + \phi, \quad \phi \sim U(0, 2\pi)
+\]
+where \( a \) is a constant and \( \phi \) is uniformly distributed over \( (0, 2\pi) \).
+
+Compute \( \mu_X(t) \) and \( \text{Var}\{X(t)\} \).
+\end{example}
+\begin{solution}
+\begin{align*}
+\mu_X(t) &= E\{X(t)\} = E\{a \cos(\omega_0 t) + \phi\} = a \cos(\omega_0 t) + E\{\phi\} = a \cos(\omega_0 t) + \pi \\
+\text{Var}\{X(t)\} &= E\{X(t)^2\} - (E\{X(t)\})^2 \\
+&= E\{(a \cos(\omega_0 t) + \phi)^2\} - (a \cos(\omega_0 t) + \pi)^2 \\
+&= a^2 \cos^2(\omega_0 t) + 2a \cos(\omega_0 t) E\{\phi\} + E\{\phi^2\} - (a^2 \cos^2(\omega_0 t) + 2a \pi \cos(\omega_0 t) + \pi^2) \\
+&= a^2 \cos^2(\omega_0 t) + 2a \cos(\omega_0 t) \pi + \frac{(2\pi)^2}{12} - a^2 \cos^2(\omega_0 t) - 2a \pi \cos(\omega_0 t) - \pi^2 \\
+&= \frac{4\pi^2}{12} - \pi^2 \\
+&= \frac{\pi^2}{3}
+\end{align*}
+\end{solution}
+
+\subsection{Example 3: Linear Stochastic Process}
+\begin{example}
+Consider the stochastic process
+\[
+X(t) = A t + b, \quad A \sim \mathcal{N}(0, 1)
+\]
+where \( A \) is a Gaussian random variable with mean 0 and variance 1, and \( b \) is a constant.
+
+Compute \( \mu_X(t) \), \( \text{Var}\{X(t)\} \), and \( R_{XX}(t_1, t_2) \).
+\end{example}
+\begin{solution}
+\begin{align*}
+\mu_X(t) &= E\{X(t)\} = E\{A t + b\} = t E\{A\} + b = 0 + b = b \\
+\text{Var}\{X(t)\} &= \text{Var}\{A t + b\} = t^2 \text{Var}\{A\} = t^2 \cdot 1 = t^2 \\
+R_{XX}(t_1, t_2) &= E\{X(t_1) X(t_2)\} = E\{(A t_1 + b)(A t_2 + b)\} \\
+&= E\{A^2 t_1 t_2 + A b t_1 + A b t_2 + b^2\} \\
+&= t_1 t_2 E\{A^2\} + b t_1 E\{A\} + b t_2 E\{A\} + b^2 \\
+&= t_1 t_2 \cdot 1 + b t_1 \cdot 0 + b t_2 \cdot 0 + b^2 \\
+&= t_1 t_2 + b^2
+\end{align*}
+\end{solution}
+
+\subsection{Example 4: Waiting Time}
+\begin{example}
+Taxis are waiting in a queue for passengers who arrive according to a Poisson process with an average rate of \( \lambda = 1 \) passenger per minute. A taxi departs as soon as two passengers have been collected or 3 minutes have expired since the first passenger has boarded.
+
+Suppose you are the first passenger. What is your average waiting time for departure?
+
+\textbf{Hint:} Condition on the first arrival after you get in the taxi.
+\end{example}
+\begin{solution}
+Let \( S_1 \) be the arrival time of the second passenger after you have boarded the taxi. \( S_1 \) follows an exponential distribution with rate \( \lambda = 1 \).
+
+Define \( X \) as your waiting time for departure. The departure occurs at:
+\[
+X = 
+\begin{cases} 
+S_1 & \text{if } S_1 < 3 \text{ minutes} \\
+3 & \text{if } S_1 \geq 3 \text{ minutes}
+\end{cases}
+\]
+
+Thus, the expected waiting time \( E\{X\} \) is:
+\[
+E\{X\} = E\{X | S_1 < 3\} P\{S_1 < 3\} + E\{X | S_1 \geq 3\} P\{S_1 \geq 3\}
+\]
+\[
+= E\{S_1 | S_1 < 3\} P\{S_1 < 3\} + 3 P\{S_1 \geq 3\}
+\]
+
+For an exponential distribution:
+\[
+P\{S_1 < 3\} = 1 - e^{-\lambda \cdot 3} = 1 - e^{-3}
+\]
+\[
+E\{S_1 | S_1 < 3\} = \frac{1 - (3 + 1)e^{-3}}{1 - e^{-3}} = \frac{1 - 4e^{-3}}{1 - e^{-3}}
+\]
+
+Plugging in the values:
+\[
+E\{X\} = \frac{1 - 4e^{-3}}{1 - e^{-3}} (1 - e^{-3}) + 3 e^{-3} = 1 - 4e^{-3} + 3e^{-3} = 1 - e^{-3}
+\]
+\[
+\approx 1 - 0.0498 = 0.9502 \text{ minutes (approximately 57 seconds)}
+\]
+\end{solution}
+
+\section{Strict-Sense Stationary (S.S.S) Processes}
+\subsection{Definition}
+\begin{itemize}
+    \item In strict terms, the statistical properties are governed by the joint probability density function.
+    \item A process \( X(t) \) is \( n \)-th order strict-sense stationary if, for any shift \( c \):
+    \[
+    f_{X(t_1), X(t_2), \ldots, X(t_n)}(x_1, x_2, \ldots, x_n) = f_{X(t_1 + c), X(t_2 + c), \ldots, X(t_n + c)}(x_1, x_2, \ldots, x_n)
+    \]
+\end{itemize}
+
+\subsection{Implications for First and Second Order}
+\begin{itemize}
+    \item \textbf{First-Order S.S.S:}
+    \[
+    f_X(x,t) = f_X(x,t + c) \quad \forall c
+    \]
+    \[
+    \mu_X(t) = \mu_X \quad \text{(constant)}
+    \]
+    \item \textbf{Second-Order S.S.S:}
+    \[
+    R_{XX}(t_1, t_2) = R_{XX}(t_1 + c, t_2 + c) \quad \forall c
+    \]
+    \[
+    R_{XX}(\tau) \quad \text{depends only on} \quad \tau = t_1 - t_2
+    \]
+\end{itemize}
+
+\subsection{First-Order S.S.S Implications}
+\begin{itemize}
+    \item From the first-order condition, for any \( c \), especially \( c = -t \), we have:
+    \[
+    f_X(x,t) = f_X(x,0)
+    \]
+    \[
+    \mu_X(t) = \mu_X(0) = \mu_X \quad \text{(constant)}
+    \]
+\end{itemize}
+
+\subsection{Second-Order S.S.S Implications}
+\begin{itemize}
+    \item From the second-order condition, for any \( c \), especially \( c = -t_2 \), we have:
+    \[
+    R_{XX}(t_1, t_2) = R_{XX}(t_1 - t_2, 0) = R_{XX}(0, t_1 - t_2) = R_{XX}(t_1 - t_2)
+    \]
+    \item Thus, the autocorrelation function depends only on the time difference \( \tau = t_1 - t_2 \).
+\end{itemize}
+
+\subsection{Consequences for Gaussian Processes}
+\begin{itemize}
+    \item For Gaussian processes, strict-sense stationarity and wide-sense stationarity are equivalent.
+    \item This is because Gaussian processes are completely characterized by their first and second moments.
+\end{itemize}
+
+\section{Wide-Sense Stationary (W.S.S) Processes}
+
+\subsection{Definition}
+\begin{itemize}
+    \item A process \( X(t) \) is said to be Wide-Sense Stationary if:
+    \begin{enumerate}[label=(i)]
+        \item The mean is a constant: \( E\{X(t)\} = \mu_X \)
+        \item The autocorrelation function depends only on the difference between the time indices: \( R_{XX}(t_1, t_2) = R_{XX}(\tau) \) where \( \tau = t_1 - t_2 \)
+    \end{enumerate}
+    \item \textbf{Key Points:}
+    \begin{itemize}
+        \item Strict-sense stationarity always implies wide-sense stationarity.
+        \item The converse is not true in general, except for Gaussian processes.
+        \item In Gaussian processes, wide-sense stationarity implies strict-sense stationarity.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Characteristics of W.S.S Processes}
+\begin{itemize}
+    \item For W.S.S processes, the mean is constant.
+    \[
+    E\{X(t)\} = \mu_X \quad \forall t
+    \]
+    \item The autocorrelation function depends only on the time difference:
+    \[
+    R_{XX}(t_1, t_2) = R_{XX}(\tau), \quad \tau = t_1 - t_2
+    \]
+\end{itemize}
+
+\subsection{Relationship with S.S.S Processes}
+\begin{itemize}
+    \item Strict-sense stationarity implies wide-sense stationarity.
+    \item The converse holds only for Gaussian processes.
+\end{itemize}
+
+\section{Characteristic Function of Gaussian Processes}
+
+\subsection{Definition}
+\[
+\phi_X(\omega) = E\{e^{j\omega X}\} = \int_{-\infty}^{\infty} e^{j\omega x} f_X(x) \, dx
+\]
+where \( j \) is the imaginary unit and \( \omega \) is a real number.
+
+\subsection{Characteristic Function of Normal Distribution}
+\begin{example}
+For \( X \sim \mathcal{N}(\mu, \sigma^2) \), the characteristic function is:
+\[
+\phi_X(\omega) = e^{j\omega\mu - \frac{1}{2} \omega^2 \sigma^2}
+\]
+\end{example}
+\begin{solution}
+The characteristic function of a normal distribution is derived as follows:
+\[
+\phi_X(\omega) = E\{e^{j\omega X}\} = e^{j\omega\mu - \frac{1}{2} \omega^2 \sigma^2}
+\]
+This is because:
+\[
+X \sim \mathcal{N}(\mu, \sigma^2) \implies e^{j\omega X} \sim \mathcal{N}(j\omega\mu, \omega^2 \sigma^2)
+\]
+Hence,
+\[
+\phi_X(\omega) = e^{j\omega\mu - \frac{1}{2} \omega^2 \sigma^2}
+\]
+\end{solution}
+
+\subsection{Characteristic Function for Joint Gaussian Variables}
+\begin{itemize}
+    \item For Gaussian processes, the joint characteristic function depends only on the mean and covariance.
+    \item If \( X(t) \) is a Gaussian process and W.S.S, then S.S.S follows automatically.
+\end{itemize}
+
+\section{Additional Notes}
+
+\subsection{Cauchy-Schwarz Inequality}
+\[
+|E\{XY\}| \leq \sqrt{E\{X^2\} E\{Y^2\}}
+\]
+\begin{itemize}
+    \item Equality holds if and only if \( X \) and \( Y \) are linearly dependent.
+\end{itemize}
+
+\subsection{Covariance Matrix for Multivariate RVs}
+\[
+\Sigma = 
+\begin{pmatrix}
+\text{Var}(X) & \text{Cov}(X,Y) \\
+\text{Cov}(Y,X) & \text{Var}(Y)
+\end{pmatrix}
+\]
+
+\subsection{Transformation of Variables}
+\begin{itemize}
+    \item \textbf{Single Variable Transformation:}
+    \[
+    Y = g(X), \quad X = g^{-1}(Y)
+    \]
+    \[
+    f_Y(y) = f_X(g^{-1}(y)) \left| \frac{d}{dy} g^{-1}(y) \right|
+    \]
+    \item \textbf{Multiple Variable Transformation:}
+    \[
+    \mathbf{Y} = \mathbf{g}(\mathbf{X}), \quad \mathbf{X} = \mathbf{g}^{-1}(\mathbf{Y})
+    \]
+    \[
+    f_{\mathbf{Y}}(\mathbf{y}) = f_{\mathbf{X}}(\mathbf{g}^{-1}(\mathbf{y})) \left| \det J \right|
+    \]
+    where \( J \) is the Jacobian matrix of partial derivatives:
+    \[
+    J = 
+    \begin{pmatrix}
+    \frac{\partial x_1}{\partial y_1} & \cdots & \frac{\partial x_1}{\partial y_n} \\
+    \vdots & \ddots & \vdots \\
+    \frac{\partial x_n}{\partial y_1} & \cdots & \frac{\partial x_n}{\partial y_n}
+    \end{pmatrix}
+    \]
+\end{itemize}
+
+\subsection{Jacobians in Transformations}
+\begin{itemize}
+    \item \textbf{Single Variable:}
+    \[
+    \left| \frac{dy}{dx} \right| \cdot \left| \frac{dx}{dy} \right| = 1
+    \]
+    \item \textbf{Multiple Variables:}
+    \[
+    \det(J) \cdot \det(J^{-1}) = 1
+    \]
+\end{itemize}
+
+\section{Conclusion}
+This chapter provides a comprehensive overview of the first and higher-order statistics of stochastic processes, including distribution functions, autocorrelation, autocovariance, and the properties of stationary processes. Additionally, key examples with solutions illustrate the application of these concepts. For more detailed explanations and proofs, refer to your course materials or standard textbooks on stochastic processes.
+
+\end{document}

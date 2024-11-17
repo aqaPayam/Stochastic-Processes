@@ -1,0 +1,492 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{float}
+
+% Define new environments for examples and solutions
+\newtheorem{example}{Example}
+\newenvironment{solution}{\noindent\textbf{Solution:}}{\hfill$\square$}
+
+% Page settings
+\geometry{
+    a4paper,
+    total={170mm,257mm},
+    left=20mm,
+    top=20mm,
+}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Stochastic Processes Lecture Notes}
+\fancyhead[R]{Week 05 - Fall 2024}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\href{https://stoch-sut.github.io/}{Course Website}}
+
+% Title formatting
+\title{
+    \vspace{-2cm}
+    \LARGE{Stochastic Processes} \\
+    \vspace{0.5cm}
+    \Large{Lecture Notes} \\
+    \vspace{0.5cm}
+    \normalsize{Week 05: Gaussian Processes}
+}
+\author{
+    Payam Taebi \\
+    \vspace{0.2cm}
+    \normalsize{}
+}
+\date{
+    Fall 2024 \\
+    \vspace{0.2cm}
+    \href{https://stoch-sut.github.io/}{https://stoch-sut.github.io/}
+}
+
+% Section formatting for better readability
+\titleformat{\section}
+  {\Large\bfseries}{\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\large\bfseries}{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\bfseries}{\thesubsubsection}{1em}{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Motivation}
+
+\subsection{Introduction}
+\begin{itemize}
+    \item In many real-world applications, we are confronted with the need for a robust and interpretable model.
+    \item Traditional approaches often rely on applying knowledge of the underlying physics to deduce specific model forms.
+    \item However, our understanding of the underlying physical processes can be limited, involve too many assumptions, or include variables that are difficult to measure.
+    \item In such cases, machine learning provides an alternative by learning relationships directly from existing data or measurements, resulting in empirical models.
+    \item Deep Neural Networks (DNNs) have shown impressive results but are often considered black boxes (not interpretable) and are vulnerable to adversarial attacks.
+\end{itemize}
+
+\subsection{Limitations of Deep Neural Networks (DNNs)}
+\begin{itemize}
+    \item \textbf{Data Availability:} DNNs typically require large amounts of labeled data to perform effectively.
+    \item \textbf{Processing Complexity:} Training and deploying DNNs can be computationally intensive.
+    \item \textbf{Robustness:} DNNs can be sensitive to noise and adversarial perturbations.
+    \item \textbf{Interpretability:} Understanding the decision-making process within DNNs is challenging, limiting their applicability in fields requiring transparency.
+\end{itemize}
+
+\subsection{Advantages of Gaussian Processes (GPs)}
+\begin{itemize}
+    \item \textbf{Probabilistic Framework:} GPs provide a principled way to quantify uncertainty in predictions.
+    \item \textbf{Flexibility:} GPs are non-parametric models, allowing them to adapt their complexity based on the data.
+    \item \textbf{Interpretability:} GPs offer insights into the underlying data through the covariance function (kernel).
+    \item \textbf{Bayesian Approach:} GPs integrate seamlessly with Bayesian inference, facilitating the incorporation of prior knowledge.
+\end{itemize}
+
+\section{The Gaussian Distribution}
+
+\subsection{Gaussian Density Function}
+\begin{itemize}
+    \item The Gaussian distribution, also known as the normal distribution, is the most common probability density function.
+    \item It is completely specified by its mean \( \mu \) and variance \( \sigma^2 \):
+    \[
+    f(x) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left( -\frac{(x - \mu)^2}{2\sigma^2} \right)
+    \]
+\end{itemize}
+
+\subsection{Gaussian PDF Example}
+\begin{example}[Gaussian PDF with Specific Parameters]
+    \textbf{Problem:} Consider a Gaussian distribution with mean \( \mu = 1.6 \) and variance \( \sigma^2 = 0.125 \). Describe its properties and plot the probability density function.
+\end{example}
+\begin{solution}
+    The Gaussian distribution with \( \mu = 1.6 \) and \( \sigma^2 = 0.125 \) has the following properties:
+    \begin{itemize}
+        \item \textbf{Mean (\( \mu \)):} The peak of the distribution is centered at 1.6.
+        \item \textbf{Variance (\( \sigma^2 \)):} Indicates the spread of the distribution. A variance of 0.125 implies a standard deviation of \( \sigma = \sqrt{0.125} \approx 0.354 \).
+        \item \textbf{Probability Density Function (PDF):}
+        \[
+        f(x) = \frac{1}{\sqrt{2\pi \times 0.125}} \exp\left( -\frac{(x - 1.6)^2}{2 \times 0.125} \right)
+        \]
+    \end{itemize}
+    The PDF is bell-shaped, symmetric around the mean, and its width is determined by the variance.
+\end{solution}
+
+\subsection{Important Gaussian Properties}
+\begin{itemize}
+    \item \textbf{Sum of Independent Gaussians:} The sum of independent Gaussian random variables is also Gaussian.
+    \[
+    \text{If } X \sim \mathcal{N}(\mu_X, \sigma_X^2) \text{ and } Y \sim \mathcal{N}(\mu_Y, \sigma_Y^2) \text{ are independent, then } X + Y \sim \mathcal{N}(\mu_X + \mu_Y, \sigma_X^2 + \sigma_Y^2).
+    \]
+    \item \textbf{Central Limit Theorem (CLT):} As the sum of a large number of independent and identically distributed (i.i.d.) random variables with finite mean and variance, the distribution of the sum tends towards a Gaussian distribution, regardless of the original distribution of the variables.
+    \item \textbf{Scaling:} Scaling a Gaussian random variable by a constant results in another Gaussian random variable.
+    \[
+    \text{If } X \sim \mathcal{N}(\mu, \sigma^2), \text{ then } aX + b \sim \mathcal{N}(a\mu + b, a^2\sigma^2).
+    \]
+\end{itemize}
+
+\section{Covariance Functions}
+
+\subsection{Definition and Importance}
+\begin{itemize}
+    \item The covariance matrix in Gaussian Processes is constructed by evaluating a covariance function (kernel) over pairs of input points.
+    \item \textbf{Covariance Function (Kernel):} A function that defines the covariance between any two points in the input space.
+    \[
+    K(\mathbf{x}, \mathbf{x}') = \mathbb{E}\left[ (f(\mathbf{x}) - m(\mathbf{x}))(f(\mathbf{x}') - m(\mathbf{x}')) \right]
+    \]
+    \item Covariance functions are the building blocks of covariance matrices and play a crucial role in determining the properties of the Gaussian Process.
+\end{itemize}
+
+\subsection{Example: Exponentiated Quadratic Kernel Function}
+\begin{itemize}
+    \item Also known as the Radial Basis Function (RBF), Squared Exponential, or Gaussian kernel.
+    \item It is one of the most widely used kernels due to its smoothness and infinite differentiability.
+    \item \textbf{Form:}
+    \[
+    K(\mathbf{x}, \mathbf{x}') = \sigma_f^2 \exp\left( -\frac{||\mathbf{x} - \mathbf{x}'||^2}{2l^2} \right)
+    \]
+    where:
+    \begin{itemize}
+        \item \( \sigma_f^2 \) is the signal variance.
+        \item \( l \) is the length-scale parameter.
+    \end{itemize}
+    \item \textbf{Properties:}
+    \begin{itemize}
+        \item \textbf{Smoothness:} Implies that the functions drawn from the GP are smooth.
+        \item \textbf{Stationarity:} The covariance depends only on the distance between input points, not their absolute positions.
+        \item \textbf{Isotropy:} The covariance is the same in all directions.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Additional Covariance Functions}
+\begin{itemize}
+    \item \textbf{Linear Kernel:}
+    \[
+    K(\mathbf{x}, \mathbf{x}') = \mathbf{x}^T \mathbf{x}' + c
+    \]
+    where \( c \) is a constant.
+    \item \textbf{Matérn Kernel:} Controls the smoothness of the functions. It introduces a parameter \( \nu \) that determines the differentiability of the functions.
+    \[
+    K(\mathbf{x}, \mathbf{x}') = \frac{2^{1-\nu}}{\Gamma(\nu)} \left( \frac{\sqrt{2\nu} ||\mathbf{x} - \mathbf{x}'||}{l} \right)^\nu K_\nu\left( \frac{\sqrt{2\nu} ||\mathbf{x} - \mathbf{x}'||}{l} \right)
+    \]
+    where \( K_\nu \) is the modified Bessel function of the second kind.
+    \item \textbf{Periodic Kernel:}
+    \[
+    K(\mathbf{x}, \mathbf{x}') = \sigma_f^2 \exp\left( -\frac{2\sin^2(\pi ||\mathbf{x} - \mathbf{x}'|| / p)}{l^2} \right)
+    \]
+    where \( p \) is the period.
+\end{itemize}
+
+\section{Gaussian Process}
+
+\subsection{Definition}
+\begin{itemize}
+    \item A \textbf{Gaussian Process (GP)} is a stochastic process where any finite set of random variables has a joint Gaussian distribution.
+    \item A GP is completely specified by its mean function \( m(\mathbf{x}) \) and covariance function \( K(\mathbf{x}, \mathbf{x}') \):
+    \[
+    f(\mathbf{x}) \sim \mathcal{GP}(m(\mathbf{x}), K(\mathbf{x}, \mathbf{x}'))
+    \]
+    \item \textbf{Mean Function:}
+    \[
+    m(\mathbf{x}) = \mathbb{E}[f(\mathbf{x})]
+    \]
+    \item \textbf{Covariance Function:}
+    \[
+    K(\mathbf{x}, \mathbf{x}') = \mathbb{E}\left[ (f(\mathbf{x}) - m(\mathbf{x}))(f(\mathbf{x}') - m(\mathbf{x}')) \right]
+    \]
+\end{itemize}
+
+\subsection{GP as Distribution over Functions}
+\begin{itemize}
+    \item A GP can be viewed as a distribution over functions, providing a probabilistic framework for function estimation.
+    \item \textbf{Bayesian Approach:} GPs adopt a Bayesian perspective, allowing for the incorporation of prior knowledge and the updating of beliefs based on observed data.
+    \item \textbf{Uncertainty Quantification:} GPs naturally provide uncertainty estimates for predictions, which are crucial for decision-making processes.
+\end{itemize}
+
+\subsection{Relation to Neural Networks}
+\begin{itemize}
+    \item GPs can be interpreted as neural networks with infinitely many hidden units, where each weight has a Gaussian distribution.
+    \item This perspective links GPs to deep learning, highlighting their flexibility and expressiveness.
+    \item Unlike traditional neural networks, GPs do not require explicit parameter training, as their parameters are implicitly defined by the covariance function.
+\end{itemize}
+
+\subsection{Example: Multivariate Gaussian Distribution}
+\begin{example}[Multivariate Gaussian Density Function]
+    \textbf{Problem:} Describe the multivariate Gaussian distribution for a \( k \)-dimensional random vector and its density function.
+    
+    \textbf{Solution:}
+    The multivariate Gaussian distribution for a \( k \)-dimensional random vector \( \mathbf{X} = [X_1, X_2, \ldots, X_k]^T \) is defined by its mean vector \( \boldsymbol{\mu} \in \mathbb{R}^k \) and covariance matrix \( \mathbf{\Sigma} \in \mathbb{R}^{k \times k} \).
+    
+    The probability density function (PDF) is given by:
+    \[
+    f(\mathbf{X}) = \frac{1}{(2\pi)^{k/2} |\mathbf{\Sigma}|^{1/2}} \exp\left( -\frac{1}{2} (\mathbf{X} - \boldsymbol{\mu})^T \mathbf{\Sigma}^{-1} (\mathbf{X} - \boldsymbol{\mu}) \right)
+    \]
+    where:
+    \begin{itemize}
+        \item \( |\mathbf{\Sigma}| \) is the determinant of the covariance matrix.
+        \item \( \mathbf{\Sigma}^{-1} \) is the inverse of the covariance matrix.
+    \end{itemize}
+\end{example}
+
+\subsection{Case Study: Overdetermined and Underdetermined Systems}
+\begin{example}[Overdetermined Systems]
+    \textbf{Problem:} Consider a system of two equations with two unknowns. Now, add an additional observation leading to an overdetermined system. How can we solve this using a noise model?
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item \textbf{System of Equations:} 
+        \[
+        \begin{cases}
+        a_1 x + b_1 y = c_1 \\
+        a_2 x + b_2 y = c_2 \\
+        a_3 x + b_3 y = c_3 \\
+        \end{cases}
+        \]
+        \item \textbf{Overdetermined System:} With three equations and two unknowns, the system may not have an exact solution.
+        \item \textbf{Noise Model:} Introduce a noise term to account for discrepancies:
+        \[
+        a_i x + b_i y = c_i + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0, \sigma^2)
+        \]
+        \item \textbf{Probabilistic Formulation:} Model the observations probabilistically, leading to a likelihood function that can be maximized to find the best estimates for \( x \) and \( y \).
+        \item \textbf{Gaussian Process Approach:} Treat the unknown parameters as random variables with a Gaussian prior, allowing for a Bayesian treatment of the problem.
+    \end{itemize}
+\end{example}
+
+\begin{example}[Underdetermined Systems]
+    \textbf{Problem:} Consider a system with two unknowns and one observation. How can we compute the distribution of solutions?
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item \textbf{System of Equations:} 
+        \[
+        a_1 x + b_1 y = c_1
+        \]
+        \item \textbf{Underdetermined System:} With one equation and two unknowns, there are infinitely many solutions.
+        \item \textbf{Probabilistic Approach:} Assign a probability distribution to the parameters (e.g., \( x \) and \( y \)) to quantify the uncertainty.
+        \item \textbf{Gaussian Process Model:} Use a GP to model the relationship between the variables, allowing us to compute a distribution over the possible solutions.
+    \end{itemize}
+\end{example}
+
+\subsection{Probability for Under- and Overdetermined Systems}
+\begin{itemize}
+    \item \textbf{Overdetermined Systems:} Introduce a probability distribution for the variables to handle the excess equations.
+    \item \textbf{Underdetermined Systems:} Introduce a probability distribution for the parameters to handle the insufficient equations.
+    \item \textbf{Bayesian Treatment:} Utilize Gaussian Processes to model the random line example, allowing for a distribution over possible solutions.
+    \item \textbf{Multivariate Priors:} In Bayesian inference, multivariate Gaussian priors are often used to model the distribution over parameters and variables.
+\end{itemize}
+
+\begin{example}[Multivariate Linear Regression]
+    \textbf{Problem:} Describe the multivariate linear regression model using Gaussian priors.
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item \textbf{Model Formulation:}
+        \[
+        \mathbf{y} = \mathbf{X} \mathbf{w} + \boldsymbol{\epsilon}
+        \]
+        where:
+        \begin{itemize}
+            \item \( \mathbf{y} \) is the vector of observations.
+            \item \( \mathbf{X} \) is the design matrix.
+            \item \( \mathbf{w} \) is the weight vector (parameters).
+            \item \( \boldsymbol{\epsilon} \sim \mathcal{N}(0, \sigma^2 \mathbf{I}) \) is the noise.
+        \end{itemize}
+        \item \textbf{Prior Distribution:} Assign a Gaussian prior to the weight vector \( \mathbf{w} \):
+        \[
+        \mathbf{w} \sim \mathcal{N}(\mathbf{0}, \mathbf{K})
+        \]
+        where \( \mathbf{K} \) is the covariance matrix.
+        \item \textbf{Posterior Distribution:} Combining the prior and the likelihood using Bayes' theorem results in a posterior distribution for \( \mathbf{w} \) that is also Gaussian.
+    \end{itemize}
+\end{example}
+
+\section{Basis Function Representations}
+
+\subsection{Basis Function Form}
+\begin{itemize}
+    \item Radial Basis Functions (RBFs) are commonly used in GP models. They have the form:
+    \[
+    \phi_i(\mathbf{x}) = \exp\left( -\frac{||\mathbf{x} - \mathbf{c}_i||^2}{2\sigma^2} \right)
+    \]
+    where:
+    \begin{itemize}
+        \item \( \mathbf{c}_i \) are the centers of the basis functions.
+        \item \( \sigma \) is the width parameter.
+    \end{itemize}
+    \item A set of RBFs maps data into a high-dimensional feature space, enabling the modeling of complex nonlinear relationships.
+\end{itemize}
+
+\subsection{Random Functions via Basis Functions}
+\begin{itemize}
+    \item Functions can be represented as a linear combination of basis functions:
+    \[
+    f(\mathbf{x}) = \sum_{i=1}^{m} w_i \phi_i(\mathbf{x})
+    \]
+    where \( m \) is the number of basis functions and \( w_i \) are the weights.
+    \item \textbf{Weight Distribution:} The weights \( \mathbf{w} = [w_1, w_2, \ldots, w_m]^T \) are sampled from a Gaussian distribution:
+    \[
+    \mathbf{w} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})
+    \]
+    \item \textbf{Sample Functions:} Each sample of \( f(\mathbf{x}) \) corresponds to a different realization of the weights \( \mathbf{w} \).
+\end{itemize}
+
+\begin{example}[Sample Functions from Basis Function Representation]
+    \textbf{Problem:} Given a set of basis functions and weights sampled from a Gaussian distribution, describe how to generate sample functions.
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item \textbf{Step 1:} Define the basis functions \( \phi_i(\mathbf{x}) \) for \( i = 1, 2, \ldots, m \).
+        \item \textbf{Step 2:} Sample the weights \( \mathbf{w} \sim \mathcal{N}(\mathbf{0}, \mathbf{I}) \).
+        \item \textbf{Step 3:} Compute the function:
+        \[
+        f(\mathbf{x}) = \sum_{i=1}^{m} w_i \phi_i(\mathbf{x})
+        \]
+        \item \textbf{Result:} Each set of sampled weights \( \mathbf{w} \) generates a unique function \( f(\mathbf{x}) \), allowing us to visualize the variability and uncertainty in the model.
+    \end{itemize}
+\end{example}
+
+\section{Constructing Covariance}
+
+\subsection{Matrix Notation for Functions}
+\begin{itemize}
+    \item Using matrix notation, the function \( f(\mathbf{x}) \) can be written as:
+    \[
+    \mathbf{f} = \mathbf{\Phi} \mathbf{w}
+    \]
+    where:
+    \begin{itemize}
+        \item \( \mathbf{\Phi} \) is the design matrix with elements \( \Phi_{ij} = \phi_j(\mathbf{x}_i) \).
+        \item \( \mathbf{w} \) is the weight vector.
+    \end{itemize}
+    \item \textbf{Assumptions:}
+    \begin{itemize}
+        \item The weights \( \mathbf{w} \) are Gaussian distributed.
+        \item The basis functions \( \mathbf{\Phi} \) are fixed and non-stochastic for a given training set.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Infinite Feature Space}
+\begin{itemize}
+    \item A GP with an infinite number of basis functions corresponds to a non-parametric model.
+    \item As the number of basis functions \( m \) approaches infinity, the model becomes more flexible, allowing it to capture complex patterns in the data.
+    \item \textbf{Covariance Function:} In the infinite limit, the covariance function of the GP can be seen as the limit of the covariance constructed from finite basis functions.
+    \item \textbf{Functional Forms:} The functional forms for covariance functions and basis functions are similar but distinct. For example, the RBF kernel can be derived from an infinite set of RBF basis functions.
+\end{itemize}
+
+\section{Gaussian Noise}
+
+\subsection{Gaussian Noise Model}
+\begin{itemize}
+    \item In regression models, Gaussian noise is introduced to account for the mismatch between the true underlying function and the observed data.
+    \item The noise model can be represented as:
+    \[
+    y = f(\mathbf{x}) + \epsilon
+    \]
+    where \( \epsilon \sim \mathcal{N}(0, \sigma_n^2) \).
+    \item \textbf{Covariance Representation:}
+    \[
+    K_y = K + \sigma_n^2 \mathbf{I}
+    \]
+    where \( K \) is the covariance matrix derived from the kernel function, and \( \mathbf{I} \) is the identity matrix.
+    \item \textbf{Additive Nature:} Due to the additive nature of Gaussian noise, the noise term can be simply added to the existing covariance matrix, facilitating straightforward inference.
+\end{itemize}
+
+\section{Gaussian Process Limitations}
+
+\subsection{Computational Complexity}
+\begin{itemize}
+    \item Inference in GPs involves inverting the covariance matrix, which has a computational complexity of \( \mathcal{O}(n^3) \), where \( n \) is the number of training points.
+    \item For large datasets, this becomes computationally infeasible.
+    \item \textbf{Solutions:}
+    \begin{itemize}
+        \item \textbf{Sparse GPs:} Approximate methods that reduce computational complexity by using a subset of the data.
+        \item \textbf{Inducing Points:} Introduce a set of inducing points to approximate the full covariance matrix.
+        \item \textbf{Stochastic Variational Inference:} Combine variational methods with stochastic optimization for scalability.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Handling Discontinuities}
+\begin{itemize}
+    \item GPs with standard covariance functions (e.g., RBF) assume smoothness in the underlying function.
+    \item This assumption limits their ability to model functions with discontinuities or abrupt changes, such as:
+    \begin{itemize}
+        \item Financial crises
+        \item Phase transitions like phosphorylation
+        \item Collisions or edges in images
+    \end{itemize}
+    \item \textbf{Solution:} Utilize covariance functions that can handle non-smooth behavior or combine multiple kernels to capture different characteristics.
+\end{itemize}
+
+\subsection{Covariance Function Limitations}
+\begin{itemize}
+    \item The commonly used exponentiated quadratic (RBF) covariance function imposes strong smoothness assumptions, which may be too restrictive for certain applications.
+    \item \textbf{Alternatives:}
+    \begin{itemize}
+        \item \textbf{Matérn Kernel:} Introduces a smoothness parameter \( \nu \) that controls the differentiability of the functions.
+        \item \textbf{Periodic Kernel:} Suitable for modeling periodic phenomena.
+        \item \textbf{Linear Kernel:} Useful for capturing linear trends in the data.
+    \end{itemize}
+    \item \textbf{Composite Kernels:} Combine multiple kernels to capture various aspects of the data.
+\end{itemize}
+
+\section{Summary of Gaussian Processes}
+
+\begin{itemize}
+    \item \textbf{Broad Introduction to Gaussian Processes:}
+    \begin{itemize}
+        \item Started with the Gaussian distribution to build intuition.
+        \item Motivated Gaussian processes through the multivariate density function.
+    \end{itemize}
+    \item \textbf{Role of Covariance:}
+    \begin{itemize}
+        \item Emphasized the significance of the covariance function in defining the properties of the GP.
+        \item Covariance functions determine the smoothness, periodicity, and other characteristics of the functions modeled by the GP.
+    \end{itemize}
+    \item \textbf{Nonlinear Regression with Uncertainty:}
+    \begin{itemize}
+        \item GPs perform nonlinear regression while providing uncertainty estimates (error bars) for predictions.
+    \end{itemize}
+    \item \textbf{Optimization of Covariance Parameters:}
+    \begin{itemize}
+        \item Parameters of the covariance function (kernel) can be optimized using maximum likelihood, facilitating model selection and fitting.
+    \end{itemize}
+    \item \textbf{Demos and Further Resources:}
+    \begin{itemize}
+        \item Interactive demonstrations:
+        \begin{itemize}
+            \item \url{https://edward-rees.com/gp}
+            \item \url{http://chifeng.scripts.mit.edu/stuff/gp-demo/}
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\section{References}
+
+\begin{itemize}
+    \item G. Della Gatta, M. Bansal, A. Ambesi-Impiombato, D. Antonini, C. Missero, and D. di Bernardo. "Direct targets of the trp63 transcription factor revealed by a combination of gene expression profiling and reverse engineering." \textit{Genome Research}, 18(6): 939–948, Jun 2008.
+    \item A. A. Kalaitzis and N. D. Lawrence. "A simple approach to ranking differentially expressed gene expression time courses through Gaussian process regression." \textit{BMC Bioinformatics}, 12(180), 2011.
+    \item R. M. Neal. \textit{Bayesian Learning for Neural Networks}. Springer, 1996. Lecture Notes in Statistics 118.
+    \item J. Oakley and A. O’Hagan. "Bayesian inference for the uncertainty distribution of computer model outputs." \textit{Biometrika}, 89(4): 769–784, 2002.
+    \item C. E. Rasmussen and C. K. I. Williams. \textit{Gaussian Processes for Machine Learning}. MIT Press, Cambridge, MA, 2006. [Google Books].
+    \item C. K. I. Williams. "Computation with infinite neural networks." \textit{Neural Computation}, 10(5):1203–1216, 1998.
+\end{itemize}
+
+\section{Next Week}
+
+\begin{itemize}
+    \item \textbf{Point Estimation:} Exploration of methods for estimating the parameters of stochastic processes, including maximum likelihood estimation and Bayesian inference.
+\end{itemize}
+
+Have a good day!
+
+\end{document}

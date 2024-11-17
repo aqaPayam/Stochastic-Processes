@@ -1,0 +1,1263 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+% Define new environments for examples and solutions
+\newtheorem{example}{Example}
+\newenvironment{solution}{\noindent\textbf{Solution:}}{\hfill$\square$}
+
+% Page settings
+\geometry{
+    a4paper,
+    total={170mm,257mm},
+    left=20mm,
+    top=20mm,
+}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Stochastic Processes Lecture Notes}
+\fancyhead[R]{Week 03 - Fall 2024}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\href{https://stoch-sut.github.io/}{Course Website}}
+
+% Title formatting
+\title{
+    \vspace{-2cm}
+    \LARGE{Stochastic Processes} \\
+    \vspace{0.5cm}
+    \Large{Lecture Notes} \\
+    \vspace{0.5cm}
+    \normalsize{Week 03: Ergodic Stochastic Processes}
+}
+\author{
+    Payam Taebi \\
+    \vspace{0.2cm}
+    \normalsize{}
+}
+\date{
+    Fall 2024 \\
+    \vspace{0.2cm}
+    \href{https://stoch-sut.github.io/}{https://stoch-sut.github.io/}
+}
+
+% Section formatting for better readability
+\titleformat{\section}
+  {\Large\bfseries}{\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\large\bfseries}{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\bfseries}{\thesubsubsection}{1em}{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Ergodic Stochastic Processes}
+
+\subsection{Definition of Ergodicity}
+\begin{itemize}
+    \item A random process \( X(t) \) is ergodic if all of its statistics can be determined from a single sample function (sample path) of the process.
+    \item Mathematically, this means that ensemble averages equal their corresponding time averages with probability one.
+\end{itemize}
+
+\subsection{Illustration of Ergodicity}
+\begin{itemize}
+    \item Consider a single realization of \( X(t) \) (a sample path).
+    \item Statistics such as mean, variance, and autocorrelation can be estimated by averaging over time from this single realization.
+    \item Diagrammatic Representation:
+    \begin{itemize}
+        \item Sample Path: A single trajectory of \( X(t) \) over time.
+        \item Ensemble: The set of all possible trajectories of \( X(t) \).
+    \end{itemize}
+\end{itemize}
+
+\subsection{Ergodicity and Stationarity}
+\begin{itemize}
+    \item Wide-Sense Stationary (WSS):
+    \begin{itemize}
+        \item Mean \( E[X(t)] = \mu_X \) is constant over time.
+        \item Autocorrelation \( R_{XX}(t_1, t_2) = R_{XX}(\tau) \) depends only on the time difference \( \tau = t_1 - t_2 \).
+    \end{itemize}
+    \item Strictly Stationary (SSS):
+    \begin{itemize}
+        \item All statistical properties (not just mean and autocorrelation) are invariant to time shifts.
+    \end{itemize}
+    \item Relationship:
+    \begin{itemize}
+        \item Ergodic processes are generally both SSS and WSS.
+        \item SSS implies WSS, but WSS does not necessarily imply SSS unless additional conditions (like Gaussianity) are met.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Weak Forms of Ergodicity}
+\begin{itemize}
+    \item Complete statistics estimation is often difficult; thus, focus is usually on:
+    \begin{itemize}
+        \item Ergodicity in Mean: \( E[X(t)] = \langle x(t) \rangle \)
+        \item Ergodicity in Autocorrelation: \( R_{XX}(\tau) = \langle x(t+\tau)x(t) \rangle \)
+    \end{itemize}
+\end{itemize}
+
+\section{Ergodicity in Mean}
+
+\subsection{Definition}
+\begin{itemize}
+    \item A random process \( X(t) \) is ergodic in mean if:
+    \[
+    E[X(t)] = \langle x(t) \rangle
+    \]
+    \item Where \( \langle \cdot \rangle \) denotes time-averaging:
+    \[
+    \langle x(t) \rangle = \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} x(t) \, dt
+    \]
+    \item Necessary and Sufficient Condition:
+    \[
+    \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} C(\tau) \, d\tau = 0
+    \]
+    where \( C(\tau) = R_{XX}(\tau) - \mu_X^2 \) is the autocovariance function.
+    \item This condition ensures that the covariance between \( X(t) \) and its time-shifted version \( X(t+\tau) \) diminishes as \( \tau \) increases, leading the time average to converge to the ensemble mean.
+\end{itemize}
+
+\subsection{Example 1-a: Ergodic in Mean}
+\begin{example}[Ergodic in Mean]
+Consider the stochastic process:
+\[
+X(t) = a \cos(\omega_0 t + \theta)
+\]
+where:
+\begin{itemize}
+    \item \( \theta \) is a random variable uniformly distributed over \( [0, 2\pi] \)
+    \item \( t \) is the time index
+    \item \( a \) and \( \omega_0 \) are constant variables
+\end{itemize}
+\begin{itemize}
+    \item \( X(t) \) is a WSS process with mean zero.
+    \item Mean is independent of the random variable \( \theta \).
+\end{itemize}
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item \textbf{Mean}:
+    \[
+    E[X(t)] = E[a \cos(\omega_0 t + \theta)] = a \cdot E[\cos(\omega_0 t + \theta)] = a \cdot 0 = 0
+    \]
+    \item \textbf{Time Average}:
+    \[
+    \langle x(t) \rangle = \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} a \cos(\omega_0 t + \theta) \, dt = 0
+    \]
+    \item Therefore, \( E[X(t)] = \langle x(t) \rangle = 0 \), satisfying ergodicity in mean.
+    \item \textbf{Autocovariance Condition}:
+    \[
+    C(\tau) = R_{XX}(\tau) - \mu_X^2 = R_{XX}(\tau) - 0 = R_{XX}(\tau)
+    \]
+    \item Since \( X(t) \) is WSS and \( R_{XX}(\tau) \) for a cosine process with uniformly distributed phase is:
+    \[
+    R_{XX}(\tau) = \frac{a^2}{2} \cos(\omega_0 \tau)
+    \]
+    \item Evaluate the necessary condition:
+    \[
+    \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} \frac{a^2}{2} \cos(\omega_0 \tau) \, d\tau = \frac{a^2}{2} \lim_{T \to \infty} \frac{1}{T} \cdot \frac{\sin(\omega_0 T)}{\omega_0} = 0
+    \]
+    \item Hence, the condition is satisfied, confirming that \( X(t) \) is ergodic in mean.
+\end{itemize}
+\end{solution}
+
+\subsection{Example 1-a Continued: Non-Ergodic in Mean}
+\begin{example}[Non-Ergodic in Mean]
+Consider the stochastic process:
+\[
+X(t) = a \cos(\omega_0 t + \theta) + c_r
+\]
+where:
+\begin{itemize}
+    \item \( \theta \) is a random variable uniformly distributed over \( [0, 2\pi] \)
+    \item \( c_r \) is a random variable
+    \item \( a \) and \( \omega_0 \) are constant variables
+\end{itemize}
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item \textbf{Mean}:
+    \[
+    E[X(t)] = E[a \cos(\omega_0 t + \theta) + c_r] = 0 + \mu_{c_r} = \mu_{c_r}
+    \]
+    \item \textbf{Time Average}:
+    \[
+    \langle x(t) \rangle = \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} (a \cos(\omega_0 t + \theta) + c_r) \, dt = 0 + c_r = c_r
+    \]
+    \item \textbf{Autocovariance Condition}:
+    \[
+    C(\tau) = R_{XX}(\tau) - \mu_X^2 = R_{XX}(\tau) - \mu_{c_r}^2
+    \]
+    \item The autocorrelation function \( R_{XX}(\tau) \) becomes:
+    \[
+    R_{XX}(\tau) = \frac{a^2}{2} \cos(\omega_0 \tau) + \text{Cov}(c_r, a \cos(\omega_0 t + \theta) + c_r)
+    \]
+    \[
+    = \frac{a^2}{2} \cos(\omega_0 \tau) + \text{Cov}(c_r, c_r) = \frac{a^2}{2} \cos(\omega_0 \tau) + \text{Var}(c_r)
+    \]
+    \item Therefore:
+    \[
+    C(\tau) = \frac{a^2}{2} \cos(\omega_0 \tau) + \text{Var}(c_r) - \mu_{c_r}^2
+    \]
+    \item Evaluate the necessary condition:
+    \[
+    \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} \left( \frac{a^2}{2} \cos(\omega_0 \tau) + \text{Var}(c_r) - \mu_{c_r}^2 \right) \, d\tau = \lim_{T \to \infty} \left( \frac{a^2}{2T} \int_{0}^{T} \cos(\omega_0 \tau) \, d\tau + \frac{1}{T} (\text{Var}(c_r) - \mu_{c_r}^2) \cdot T \right)
+    \]
+    \[
+    = \lim_{T \to \infty} \left( \frac{a^2}{2T} \cdot \frac{\sin(\omega_0 T)}{\omega_0} + \text{Var}(c_r) - \mu_{c_r}^2 \right) = 0 + \text{Var}(c_r) - \mu_{c_r}^2
+    \]
+    \item Unless \( \text{Var}(c_r) - \mu_{c_r}^2 = 0 \) (i.e., \( c_r \) is deterministic), the condition is not satisfied.
+    \item Therefore, \( X(t) \) is \textbf{not ergodic in mean}.
+\end{itemize}
+\end{solution}
+
+\subsection{Example 2: Non-Ergodic in Mean}
+\begin{example}[Non-Ergodic in Mean]
+Let \( C \) be a random variable, and define the process:
+\[
+X(t) = C
+\]
+\begin{itemize}
+    \item Is \( X(t) \) mean ergodic?
+\end{itemize}
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item \textbf{Ensemble Average}:
+    \[
+    E[X(t)] = E[C] = \mu_C
+    \]
+    \item \textbf{Time Average}:
+    \[
+    \langle X(t) \rangle = \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} X(t) \, dt = \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} C \, dt = C
+    \]
+    \item \textbf{Autocovariance Condition}:
+    \[
+    C(\tau) = R_{XX}(\tau) - \mu_X^2 = E[X(t) X(t+\tau)] - \mu_C^2 = E[C^2] - \mu_C^2 = \text{Var}(C)
+    \]
+    \item Evaluate the necessary condition:
+    \[
+    \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} \text{Var}(C) \, d\tau = \text{Var}(C) \neq 0
+    \]
+    \item Since \( \text{Var}(C) > 0 \), the condition is not satisfied.
+    \item Therefore, \( X(t) \) is \textbf{not ergodic in mean}.
+\end{itemize}
+\end{solution}
+
+\section{Ergodicity in Autocorrelation}
+
+\subsection{Definition}
+\begin{itemize}
+    \item A process is ergodic in autocorrelation if the autocorrelation function can be determined by time averaging a single realization:
+    \[
+    R_{XX}(\tau) = \langle x(t+\tau)x(t) \rangle
+    \]
+    \item Where:
+    \[
+    \langle x(t+\tau)x(t) \rangle = \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} x(t+\tau)x(t) \, dt
+    \]
+    \item Necessary and Sufficient Condition:
+    \[
+    \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} C(\tau) \, d\tau = 0
+    \]
+    where \( C(\tau) = R_{XX}(\tau) - \mu_X^2 \)
+\end{itemize}
+
+\subsection{Example 3: Ergodic in Autocorrelation}
+\begin{example}[Ergodic in Autocorrelation]
+Consider the stochastic process:
+\[
+X(t) = A \cos(2\pi f_c t + \theta)
+\]
+where:
+\begin{itemize}
+    \item \( A \) and \( f_c \) are constants
+    \item \( \theta \) is a random variable uniformly distributed over \( [0, 2\pi] \)
+\end{itemize}
+\begin{itemize}
+    \item The autocorrelation of \( X(t) \) is:
+    \[
+    R_{XX}(\tau) = \frac{A^2}{2} \cos(2\pi f_c \tau)
+    \]
+    \item Determine if \( X(t) \) is ergodic in autocorrelation.
+\end{itemize}
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item \textbf{Autocorrelation of Sample Function}:
+    \[
+    \langle X(t+\tau) X(t) \rangle = \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} A \cos(2\pi f_c (t+\tau) + \theta) \cdot A \cos(2\pi f_c t + \theta) \, dt
+    \]
+    \item Using trigonometric identities:
+    \[
+    \cos(a)\cos(b) = \frac{1}{2} [\cos(a - b) + \cos(a + b)]
+    \]
+    \item Substitute \( a = 2\pi f_c (t+\tau) + \theta \) and \( b = 2\pi f_c t + \theta \):
+    \[
+    \cos(2\pi f_c (t+\tau) + \theta) \cos(2\pi f_c t + \theta) = \frac{1}{2} \left[ \cos(2\pi f_c \tau) + \cos(4\pi f_c t + 2\theta + 2\pi f_c \tau) \right]
+    \]
+    \item Therefore:
+    \[
+    \langle X(t+\tau) X(t) \rangle = \lim_{T \to \infty} \frac{A^2}{2T} \int_{0}^{T} \left[ \cos(2\pi f_c \tau) + \cos(4\pi f_c t + 2\theta + 2\pi f_c \tau) \right] dt
+    \]
+    \[
+    = \frac{A^2}{2T} \left[ \cos(2\pi f_c \tau) \cdot T + \int_{0}^{T} \cos(4\pi f_c t + 2\theta + 2\pi f_c \tau) \, dt \right]
+    \]
+    \[
+    = \frac{A^2}{2} \cos(2\pi f_c \tau) + \frac{A^2}{2T} \cdot \left[ \frac{\sin(4\pi f_c t + 2\theta + 2\pi f_c \tau)}{4\pi f_c} \right]_{0}^{T}
+    \]
+    \item As \( T \to \infty \), the second term averages out to zero:
+    \[
+    \lim_{T \to \infty} \frac{\sin(4\pi f_c T + 2\theta + 2\pi f_c \tau) - \sin(2\theta + 2\pi f_c \tau)}{8\pi f_c T} = 0
+    \]
+    \item Therefore:
+    \[
+    \langle X(t+\tau) X(t) \rangle = \frac{A^2}{2} \cos(2\pi f_c \tau)
+    \]
+    \item Comparing with the ensemble autocorrelation:
+    \[
+    R_{XX}(\tau) = \frac{A^2}{2} \cos(2\pi f_c \tau)
+    \]
+    \item Hence, \( X(t) \) is \textbf{ergodic in autocorrelation}.
+\end{itemize}
+\end{solution}
+
+\subsection{Example 4: Non-Ergodic in Mean}
+\begin{example}[Non-Ergodic in Mean]
+Let \( Y(t) = X(t) + A \), where:
+\begin{itemize}
+    \item \( X(t) \) is a WSS Gaussian process with \( E[X(t)] = 0 \) and \( R_{XX}(\tau) = e^{-\tau} \)
+    \item \( A \) is a Gaussian random variable, \( A \sim \mathcal{N}(0,1) \), independent of \( X(t) \)
+\end{itemize}
+\begin{itemize}
+    \item Is \( Y(t) \) mean ergodic?
+\end{itemize}
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item \textbf{Ensemble Average}:
+    \[
+    E[Y(t)] = E[X(t) + A] = E[X(t)] + E[A] = 0 + 0 = 0
+    \]
+    \item \textbf{Time Average}:
+    \[
+    \langle Y(t) \rangle = \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} (X(t) + A) \, dt = \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} X(t) \, dt + A = 0 + A = A
+    \]
+    \item \textbf{Autocovariance Condition}:
+    \[
+    C(\tau) = R_{YY}(\tau) - \mu_Y^2 = R_{YY}(\tau) - 0 = R_{YY}(\tau)
+    \]
+    \item The autocorrelation function \( R_{YY}(\tau) \) is:
+    \[
+    R_{YY}(\tau) = R_{XX}(\tau) + R_{AA}(\tau) = e^{-\tau} + \delta(\tau)
+    \]
+    where \( R_{AA}(\tau) = E[A^2] \delta(\tau) = 1 \cdot \delta(\tau) \)
+    \item Evaluate the necessary condition:
+    \[
+    \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} R_{YY}(\tau) \, d\tau = \lim_{T \to \infty} \frac{1}{T} \left( \int_{0}^{T} e^{-\tau} \, d\tau + \int_{0}^{T} \delta(\tau) \, d\tau \right) = \lim_{T \to \infty} \left( \frac{1 - e^{-T}}{T} + \frac{1}{T} \right) = 0
+    \]
+    \item However, the time average \( \langle Y(t) \rangle = A \) remains a random variable with \( E[A] = 0 \) and \( \text{Var}(A) = 1 \).
+    \item Since \( \langle Y(t) \rangle \) does not converge to the ensemble mean \( E[Y(t)] = 0 \) almost surely (due to the randomness of \( A \)), the condition is not satisfied in practical terms.
+    \item Therefore, \( Y(t) \) is \textbf{not mean ergodic}.
+\end{itemize}
+\end{solution}
+
+\section{Fourier Transforms}
+
+\subsection{Definitions}
+\begin{itemize}
+    \item Fourier Transform (FT) of a function \( x(t) \):
+    \[
+    X(\omega) = \int_{-\infty}^{\infty} x(t) e^{-j\omega t} \, dt
+    \]
+    \item Inverse Fourier Transform (IFT):
+    \[
+    x(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} X(\omega) e^{j\omega t} \, d\omega
+    \]
+\end{itemize}
+
+\subsection{Properties of Fourier Transforms}
+\begin{itemize}
+    \item Linearity:
+    \[
+    \mathcal{F}\{a x(t) + b y(t)\} = a X(\omega) + b Y(\omega)
+    \]
+    \item Time Shifting:
+    \[
+    \mathcal{F}\{x(t - t_0)\} = X(\omega) e^{-j\omega t_0}
+    \]
+    \item Frequency Shifting:
+    \[
+    \mathcal{F}\{x(t) e^{j\omega_0 t}\} = X(\omega - \omega_0)
+    \]
+    \item Scaling:
+    \[
+    \mathcal{F}\{x(at)\} = \frac{1}{|a|} X\left(\frac{\omega}{a}\right)
+    \]
+    \item Conjugation:
+    \[
+    \mathcal{F}\{x^*(t)\} = X^*(-\omega)
+    \]
+    \item Duality:
+    \[
+    \mathcal{F}\{X(t)\} = 2\pi x(-\omega)
+    \]
+    \item Convolution:
+    \[
+    \mathcal{F}\{x(t) * y(t)\} = X(\omega) Y(\omega)
+    \]
+    \item Multiplication:
+    \[
+    \mathcal{F}\{x(t) y(t)\} = \frac{1}{2\pi} \left( X(\omega) * Y(\omega) \right)
+    \]
+    \item Parseval’s Theorem:
+    \[
+    \int_{-\infty}^{\infty} |x(t)|^2 \, dt = \frac{1}{2\pi} \int_{-\infty}^{\infty} |X(\omega)|^2 \, d\omega
+    \]
+\end{itemize}
+
+\subsection{Table of Important Fourier Transforms}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Function} & \textbf{Fourier Transform} & \textbf{Inverse FT} \\ \midrule
+Delta Function & \( \delta(t) \) & \( 1 \) \\
+Constant & \( 1 \) & \( 2\pi \delta(\omega) \) \\
+Rectangular Pulse & \( \text{rect}(t) \) & \( 2\pi \text{sinc}(\omega) \) \\
+Exponential Decay & \( e^{-at} u(t) \) & \( \frac{1}{a + j\omega} \) \\
+Cosine & \( \cos(\omega_0 t) \) & \( \pi [\delta(\omega - \omega_0) + \delta(\omega + \omega_0)] \) \\
+Sine & \( \sin(\omega_0 t) \) & \( j\pi [\delta(\omega - \omega_0) - \delta(\omega + \omega_0)] \) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Example 5: Fourier Transform Application}
+\begin{example}[Fourier Transform of a Sine Wave]
+Find the Fourier transform of \( x(t) = \sin(\omega_0 t) \).
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item Using Euler's formula:
+    \[
+    \sin(\omega_0 t) = \frac{e^{j\omega_0 t} - e^{-j\omega_0 t}}{2j}
+    \]
+    \item Fourier transform:
+    \[
+    \mathcal{F}\{\sin(\omega_0 t)\} = \frac{1}{2j} \left[ \mathcal{F}\{e^{j\omega_0 t}\} - \mathcal{F}\{e^{-j\omega_0 t}\} \right]
+    \]
+    \item Using the Fourier transform of exponentials:
+    \[
+    \mathcal{F}\{e^{j\omega_0 t}\} = 2\pi \delta(\omega - \omega_0)
+    \]
+    \[
+    \mathcal{F}\{e^{-j\omega_0 t}\} = 2\pi \delta(\omega + \omega_0)
+    \]
+    \item Substituting back:
+    \[
+    \mathcal{F}\{\sin(\omega_0 t)\} = \frac{1}{2j} \left[ 2\pi \delta(\omega - \omega_0) - 2\pi \delta(\omega + \omega_0) \right] = \pi \left[ \delta(\omega - \omega_0) - \delta(\omega + \omega_0) \right] \frac{1}{j}
+    \]
+    \item Simplifying using \( j = \sqrt{-1} \):
+    \[
+    \mathcal{F}\{\sin(\omega_0 t)\} = j\pi \left[ \delta(\omega + \omega_0) - \delta(\omega - \omega_0) \right]
+    \]
+\end{itemize}
+\end{solution}
+
+\subsection{Example 6: Inverse Fourier Transform Application}
+\begin{example}[Inverse Fourier Transform of a Rectangular Pulse]
+Find the inverse Fourier transform of \( X(\omega) = 2\pi \text{rect}\left(\frac{\omega}{2B}\right) \).
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item The inverse Fourier transform of \( X(\omega) = 2\pi \text{rect}\left(\frac{\omega}{2B}\right) \) is:
+    \[
+    x(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} 2\pi \text{rect}\left(\frac{\omega}{2B}\right) e^{j\omega t} \, d\omega = \int_{-\infty}^{\infty} \text{rect}\left(\frac{\omega}{2B}\right) e^{j\omega t} \, d\omega
+    \]
+    \item The rectangular function \( \text{rect}\left(\frac{\omega}{2B}\right) \) is defined as:
+    \[
+    \text{rect}\left(\frac{\omega}{2B}\right) = 
+    \begin{cases}
+    1 & |\omega| \leq B \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+    \item Therefore:
+    \[
+    x(t) = \int_{-B}^{B} e^{j\omega t} \, d\omega = \frac{e^{jBt} - e^{-jBt}}{jt} = \frac{2\sin(Bt)}{t} = 2 \cdot \text{sinc}\left(\frac{Bt}{\pi}\right)
+    \]
+    \item Thus:
+    \[
+    x(t) = 2 \cdot \text{sinc}\left(\frac{Bt}{\pi}\right)
+    \]
+\end{itemize}
+\end{solution}
+
+\subsection{Fourier Transform Properties}
+\begin{itemize}
+    \item Linearity:
+    \[
+    \mathcal{F}\{a x(t) + b y(t)\} = a X(\omega) + b Y(\omega)
+    \]
+    \item Time Shifting:
+    \[
+    \mathcal{F}\{x(t - t_0)\} = X(\omega) e^{-j\omega t_0}
+    \]
+    \item Frequency Shifting:
+    \[
+    \mathcal{F}\{x(t) e^{j\omega_0 t}\} = X(\omega - \omega_0)
+    \]
+    \item Scaling:
+    \[
+    \mathcal{F}\{x(at)\} = \frac{1}{|a|} X\left(\frac{\omega}{a}\right)
+    \]
+    \item Conjugation:
+    \[
+    \mathcal{F}\{x^*(t)\} = X^*(-\omega)
+    \]
+    \item Duality:
+    \[
+    \mathcal{F}\{X(t)\} = 2\pi x(-\omega)
+    \]
+    \item Convolution:
+    \[
+    \mathcal{F}\{x(t) * y(t)\} = X(\omega) Y(\omega)
+    \]
+    \item Multiplication:
+    \[
+    \mathcal{F}\{x(t) y(t)\} = \frac{1}{2\pi} \left( X(\omega) * Y(\omega) \right)
+    \]
+    \item Parseval’s Theorem:
+    \[
+    \int_{-\infty}^{\infty} |x(t)|^2 \, dt = \frac{1}{2\pi} \int_{-\infty}^{\infty} |X(\omega)|^2 \, d\omega
+    \]
+\end{itemize}
+
+\section{Power Spectrum}
+
+\subsection{Definition for Deterministic Signals}
+\begin{itemize}
+    \item For a deterministic signal \( x(t) \), the Fourier transform \( X(\omega) \) is defined as:
+    \[
+    X(\omega) = \int_{-\infty}^{\infty} x(t) e^{-j\omega t} \, dt
+    \]
+    \item The energy spectrum is given by:
+    \[
+    |X(\omega)|^2
+    \]
+    \item By Parseval’s Theorem:
+    \[
+    \int_{-\infty}^{\infty} |x(t)|^2 \, dt = \frac{1}{2\pi} \int_{-\infty}^{\infty} |X(\omega)|^2 \, d\omega
+    \]
+    \item Therefore, \( |X(\omega)|^2 \) represents the energy distribution across frequencies.
+\end{itemize}
+
+\subsection{Power Spectrum for Stochastic Processes}
+\begin{itemize}
+    \item For stochastic processes, directly applying the Fourier transform to \( X(t) \) yields a sequence of random variables for each frequency \( \omega \).
+    \item To obtain a meaningful spectral distribution, focus on the autocorrelation function \( R_{XX}(\tau) \).
+\end{itemize}
+
+\subsection{Power Spectral Density (PSD)}
+\begin{itemize}
+    \item The power spectral density \( S_{XX}(\omega) \) of a WSS process \( X(t) \) is the Fourier transform of its autocorrelation function \( R_{XX}(\tau) \):
+    \[
+    S_{XX}(\omega) = \int_{-\infty}^{\infty} R_{XX}(\tau) e^{-j\omega \tau} \, d\tau
+    \]
+    \item Wiener-Khinchin Theorem: The autocorrelation function and the power spectrum form a Fourier transform pair.
+    \item Inverse Fourier Transform:
+    \[
+    R_{XX}(\tau) = \frac{1}{2\pi} \int_{-\infty}^{\infty} S_{XX}(\omega) e^{j\omega \tau} \, d\omega
+    \]
+    \item The total power of the process is:
+    \[
+    P = R_{XX}(0) = \frac{1}{2\pi} \int_{-\infty}^{\infty} S_{XX}(\omega) \, d\omega = E[|X(t)|^2]
+    \]
+    \item Note: The division by \( 2\pi \) is essential to maintain consistency between time and frequency domains.
+\end{itemize}
+
+\subsection{Power of \( X(t) \)}
+\begin{itemize}
+    \item The power of \( X(t) \) can be expressed in various forms:
+    \begin{align*}
+        P &= E[|X(t)|^2] \\
+        &= R_{XX}(0) \\
+        &= \frac{1}{2\pi} \int_{-\infty}^{\infty} S_{XX}(\omega) \, d\omega
+    \end{align*}
+    \item These representations highlight the relationship between the time-domain autocorrelation and the frequency-domain power spectrum.
+\end{itemize}
+
+\subsection{Example 4: Power Spectrum of a WSS Process}
+\begin{example}[Power Spectrum]
+Let \( X(t) \) be a WSS process with autocorrelation function:
+\[
+R_{XX}(\tau) = e^{-|\tau|}
+\]
+Find the power spectral density \( S_{XX}(\omega) \).
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item Compute the Fourier transform of \( R_{XX}(\tau) = e^{-|\tau|} \):
+    \[
+    S_{XX}(\omega) = \int_{-\infty}^{\infty} e^{-|\tau|} e^{-j\omega \tau} \, d\tau
+    \]
+    \item Split the integral into two parts:
+    \[
+    S_{XX}(\omega) = \int_{-\infty}^{0} e^{\tau} e^{-j\omega \tau} \, d\tau + \int_{0}^{\infty} e^{-\tau} e^{-j\omega \tau} \, d\tau
+    \]
+    \[
+    = \int_{-\infty}^{0} e^{(1 - j\omega)\tau} \, d\tau + \int_{0}^{\infty} e^{-(1 + j\omega)\tau} \, d\tau
+    \]
+    \item Evaluate the integrals:
+    \[
+    \int_{-\infty}^{0} e^{(1 - j\omega)\tau} \, d\tau = \frac{1}{1 - j\omega}
+    \]
+    \[
+    \int_{0}^{\infty} e^{-(1 + j\omega)\tau} \, d\tau = \frac{1}{1 + j\omega}
+    \]
+    \item Therefore:
+    \[
+    S_{XX}(\omega) = \frac{1}{1 - j\omega} + \frac{1}{1 + j\omega} = \frac{(1 + j\omega) + (1 - j\omega)}{1 + \omega^2} = \frac{2}{1 + \omega^2}
+    \]
+    \item Thus:
+    \[
+    S_{XX}(\omega) = \frac{2}{1 + \omega^2}
+    \]
+\end{itemize}
+\end{solution}
+
+\subsection{Wiener-Khinchin Theorem}
+\begin{itemize}
+    \item The autocorrelation function and the power spectral density of a WSS process form a Fourier transform pair:
+    \[
+    S_{XX}(\omega) = \int_{-\infty}^{\infty} R_{XX}(\tau) e^{-j\omega \tau} \, d\tau
+    \]
+    \[
+    R_{XX}(\tau) = \frac{1}{2\pi} \int_{-\infty}^{\infty} S_{XX}(\omega) e^{j\omega \tau} \, d\omega
+    \]
+    \item This theorem is fundamental in connecting time-domain and frequency-domain analyses.
+\end{itemize}
+
+\subsection{Nonnegative-Definiteness of Autocorrelation Function}
+\begin{itemize}
+    \item The autocorrelation function \( R_{XX}(\tau) \) must satisfy:
+    \[
+    \int_{-\infty}^{\infty} S_{XX}(\omega) |A(\omega)|^2 \, d\omega \geq 0 \quad \forall A(\omega)
+    \]
+    \item This implies that the power spectral density \( S_{XX}(\omega) \) is nonnegative for all \( \omega \):
+    \[
+    S_{XX}(\omega) \geq 0 \quad \forall \omega
+    \]
+\end{itemize}
+
+\section{Power Spectra and LTI Systems}
+
+\subsection{Input-Output Relations in LTI Systems}
+\begin{itemize}
+    \item If a WSS process \( X(t) \) with autocorrelation function \( R_{XX}(\tau) \) is applied to an LTI system with impulse response \( h(t) \), then:
+    \begin{itemize}
+        \item Output Mean:
+        \[
+        \mu_Y(t) = \mu_X(t) * h(t) = \mu_X * h(t)
+        \]
+        \item Cross-Correlation Function:
+        \[
+        R_{XY}(\tau) = R_{XX}(\tau) * h(\tau)
+        \]
+        \item Autocorrelation of the Output Process:
+        \[
+        R_{YY}(\tau) = R_{XY}(\tau) * h(-\tau) = R_{XX}(\tau) * h(\tau) * h(-\tau)
+        \]
+    \end{itemize}
+    \item Frequency Domain Representation:
+    \begin{itemize}
+        \item Fourier transform relates autocorrelation functions to power spectra:
+        \[
+        S_{YY}(\omega) = |H(\omega)|^2 S_{XX}(\omega)
+        \]
+    \end{itemize}
+\end{itemize}
+
+\subsection{Transfer Function and Spectrum}
+\begin{itemize}
+    \item The transfer function \( H(\omega) \) of the system is the Fourier transform of the impulse response \( h(t) \):
+    \[
+    H(\omega) = \int_{-\infty}^{\infty} h(t) e^{-j\omega t} \, dt
+    \]
+    \item The output power spectral density \( S_{YY}(\omega) \) is related to the input power spectral density \( S_{XX}(\omega) \) by:
+    \[
+    S_{YY}(\omega) = |H(\omega)|^2 S_{XX}(\omega)
+    \]
+    \item Note: The cross-spectrum \( S_{XY}(\omega) \) need not be real or nonnegative, but the output spectrum \( S_{YY}(\omega) \) is real and nonnegative.
+\end{itemize}
+
+\subsection{Example 5: Power Spectrum of Output through LTI System}
+\begin{example}[Power Spectrum of Output]
+A WSS white noise process \( W(t) \) with \( S_{WW}(\omega) = \sigma^2 \) is passed through a low-pass filter (LPF) with transfer function:
+\[
+H(\omega) = 
+\begin{cases}
+1 & |\omega| \leq B/2 \\
+0 & \text{otherwise}
+\end{cases}
+\]
+Find the autocorrelation function of the output process \( Y(t) \).
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item \textbf{Input PSD}:
+    \[
+    S_{WW}(\omega) = \sigma^2
+    \]
+    \item \textbf{Transfer Function of LPF}:
+    \[
+    H(\omega) = 
+    \begin{cases}
+    1 & |\omega| \leq B/2 \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+    \item \textbf{Output PSD}:
+    \[
+    S_{YY}(\omega) = |H(\omega)|^2 S_{WW}(\omega) = 
+    \begin{cases}
+    \sigma^2 & |\omega| \leq B/2 \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+    \item \textbf{Autocorrelation Function via IFT}:
+    \[
+    R_{YY}(\tau) = \frac{1}{2\pi} \int_{-\infty}^{\infty} S_{YY}(\omega) e^{j\omega \tau} \, d\omega = \frac{\sigma^2}{2\pi} \int_{-B/2}^{B/2} e^{j\omega \tau} \, d\omega
+    \]
+    \[
+    R_{YY}(\tau) = \frac{\sigma^2}{2\pi} \cdot \frac{2 \sin(B\tau/2)}{\tau} = \frac{\sigma^2}{\pi} \frac{\sin(B\tau/2)}{\tau} = \sigma^2 \cdot \text{sinc}\left(\frac{B\tau}{2\pi}\right)
+    \]
+    \item Therefore, the autocorrelation function of the output process \( Y(t) \) is:
+    \[
+    R_{YY}(\tau) = \sigma^2 \cdot \text{sinc}\left(\frac{B\tau}{2\pi}\right)
+    \]
+\end{itemize}
+\end{solution}
+
+\section{Fourier Transform Formulas and Properties}
+
+\subsection{Fourier Transform Formulas}
+\begin{itemize}
+    \item Delta Function:
+    \[
+    \mathcal{F}\{\delta(t)\} = 1
+    \]
+    \item Constant:
+    \[
+    \mathcal{F}\{1\} = 2\pi \delta(\omega)
+    \]
+    \item Rectangular Pulse:
+    \[
+    \mathcal{F}\{\text{rect}(t)\} = 2\pi \text{sinc}(\omega)
+    \]
+    \item Exponential Decay:
+    \[
+    \mathcal{F}\{e^{-at}u(t)\} = \frac{1}{a + j\omega}, \quad \text{Re}(a) > 0
+    \]
+    \item Cosine:
+    \[
+    \mathcal{F}\{\cos(\omega_0 t)\} = \pi [\delta(\omega - \omega_0) + \delta(\omega + \omega_0)]
+    \]
+    \item Sine:
+    \[
+    \mathcal{F}\{\sin(\omega_0 t)\} = j\pi [\delta(\omega - \omega_0) - \delta(\omega + \omega_0)]
+    \]
+\end{itemize}
+
+\subsection{Inverse Fourier Transform Formulas}
+\begin{itemize}
+    \item Inverse Fourier Transform of Constant:
+    \[
+    \mathcal{F}^{-1}\{2\pi \delta(\omega)\} = 1
+    \]
+    \item Inverse Fourier Transform of Delta Function:
+    \[
+    \mathcal{F}^{-1}\{1\} = \delta(t)
+    \]
+    \item Inverse Fourier Transform of Rectangular Pulse:
+    \[
+    \mathcal{F}^{-1}\{2\pi \text{sinc}(\omega)\} = \text{rect}(t)
+    \]
+    \item Inverse Fourier Transform of Exponential Decay:
+    \[
+    \mathcal{F}^{-1}\left\{\frac{1}{a + j\omega}\right\} = e^{-at}u(t)
+    \]
+    \item Inverse Fourier Transform of Cosine:
+    \[
+    \mathcal{F}^{-1}\{\pi [\delta(\omega - \omega_0) + \delta(\omega + \omega_0)]\} = \cos(\omega_0 t)
+    \]
+    \item Inverse Fourier Transform of Sine:
+    \[
+    \mathcal{F}^{-1}\{j\pi [\delta(\omega - \omega_0) - \delta(\omega + \omega_0)]\} = \sin(\omega_0 t)
+    \]
+\end{itemize}
+
+\section{Additional Formulas and Theorems}
+
+\subsection{Slutsky's Theorem}
+\begin{itemize}
+    \item Statement: If \( X_n \) converges in distribution to \( X \) and \( Y_n \) converges in probability to a constant \( c \), then:
+    \[
+    X_n + Y_n \xrightarrow{d} X + c
+    \]
+    \item Application in Ergodicity: While Slutsky's Theorem is a powerful tool in convergence of random variables, it is not directly applicable in establishing ergodicity in mean. Instead, ergodicity in mean relies on the autocovariance condition:
+    \[
+    \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} C(\tau) \, d\tau = 0
+    \]
+    where \( C(\tau) = R_{XX}(\tau) - \mu_X^2 \).
+\end{itemize}
+
+\subsection{Cauchy-Schwarz Inequality}
+\[
+|E[XY]| \leq \sqrt{E[X^2] E[Y^2]}
+\]
+\begin{itemize}
+    \item Equality Condition: Holds if and only if \( X \) and \( Y \) are linearly dependent.
+\end{itemize}
+
+\subsection{Covariance Matrix for Multivariate RVs}
+\[
+\Sigma = 
+\begin{pmatrix}
+\text{Var}(X) & \text{Cov}(X,Y) \\
+\text{Cov}(Y,X) & \text{Var}(Y)
+\end{pmatrix}
+\]
+
+\subsection{Transformation of Variables}
+\begin{itemize}
+    \item Single Variable Transformation:
+    \[
+    Y = g(X), \quad X = g^{-1}(Y)
+    \]
+    \[
+    f_Y(y) = f_X(g^{-1}(y)) \left| \frac{d}{dy} g^{-1}(y) \right|
+    \]
+    \item Multiple Variable Transformation:
+    \[
+    \mathbf{Y} = \mathbf{g}(\mathbf{X}), \quad \mathbf{X} = \mathbf{g}^{-1}(\mathbf{Y})
+    \]
+    \[
+    f_{\mathbf{Y}}(\mathbf{y}) = f_{\mathbf{X}}(\mathbf{g}^{-1}(\mathbf{y})) \left| \det J \right|
+    \]
+    where \( J \) is the Jacobian matrix of partial derivatives:
+    \[
+    J = 
+    \begin{pmatrix}
+    \frac{\partial x_1}{\partial y_1} & \cdots & \frac{\partial x_1}{\partial y_n} \\
+    \vdots & \ddots & \vdots \\
+    \frac{\partial x_n}{\partial y_1} & \cdots & \frac{\partial x_n}{\partial y_n}
+    \end{pmatrix}
+    \]
+\end{itemize}
+
+\section{Power Spectral Density (PSD)}
+
+\subsection{Definition for WSS Processes}
+\begin{itemize}
+    \item The power spectral density \( S_{XX}(\omega) \) of a WSS process \( X(t) \) is the Fourier transform of its autocorrelation function \( R_{XX}(\tau) \):
+    \[
+    S_{XX}(\omega) = \int_{-\infty}^{\infty} R_{XX}(\tau) e^{-j\omega \tau} \, d\tau
+    \]
+    \item According to the Wiener-Khinchin Theorem, \( R_{XX}(\tau) \) and \( S_{XX}(\omega) \) form a Fourier transform pair.
+\end{itemize}
+
+\subsection{Total Power}
+\begin{itemize}
+    \item The total power of the process is given by:
+    \[
+    P = R_{XX}(0) = \frac{1}{2\pi} \int_{-\infty}^{\infty} S_{XX}(\omega) \, d\omega = E[|X(t)|^2]
+    \]
+    \item This relationship correctly includes the \( \frac{1}{2\pi} \) factor to maintain dimensional consistency between time and frequency domains.
+\end{itemize}
+
+\subsection{Example 6: Power Spectrum of Discrete-Time Process}
+\begin{example}[Power Spectrum]
+A discrete-time WSS process \( X[nT] \) has autocorrelation sequence:
+\[
+R_{XX}[k] = \sigma^2 \delta[k]
+\]
+Find the power spectral density \( S_{XX}(\omega) \).
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item Using the definition:
+    \[
+    S_{XX}(\omega) = \sum_{k=-\infty}^{\infty} R_{XX}[k] e^{-j\omega k} = \sum_{k=-\infty}^{\infty} \sigma^2 \delta[k] e^{-j\omega k} = \sigma^2
+    \]
+    \item Therefore, the power spectral density is flat:
+    \[
+    S_{XX}(\omega) = \sigma^2 \quad \forall \omega
+    \]
+    \item This indicates a white noise process in discrete-time.
+\end{itemize}
+\end{solution}
+
+\subsection{Wiener-Khinchin Theorem}
+\begin{itemize}
+    \item The autocorrelation function and the power spectral density of a WSS process form a Fourier transform pair:
+    \[
+    S_{XX}(\omega) = \int_{-\infty}^{\infty} R_{XX}(\tau) e^{-j\omega \tau} \, d\tau
+    \]
+    \[
+    R_{XX}(\tau) = \frac{1}{2\pi} \int_{-\infty}^{\infty} S_{XX}(\omega) e^{j\omega \tau} \, d\omega
+    \]
+    \item This theorem is fundamental in connecting time-domain and frequency-domain analyses.
+\end{itemize}
+
+\subsection{Nonnegative-Definiteness of Autocorrelation Function}
+\begin{itemize}
+    \item The autocorrelation function \( R_{XX}(\tau) \) must satisfy:
+    \[
+    \int_{-\infty}^{\infty} S_{XX}(\omega) |A(\omega)|^2 \, d\omega \geq 0 \quad \forall A(\omega)
+    \]
+    \item This implies that the power spectral density \( S_{XX}(\omega) \) is nonnegative for all \( \omega \):
+    \[
+    S_{XX}(\omega) \geq 0 \quad \forall \omega
+    \]
+\end{itemize}
+
+\section{Power Spectra and LTI Systems}
+
+\subsection{Input-Output Relations in LTI Systems}
+\begin{itemize}
+    \item If a WSS process \( X(t) \) with autocorrelation function \( R_{XX}(\tau) \) is applied to an LTI system with impulse response \( h(t) \), then:
+    \begin{itemize}
+        \item Output Mean:
+        \[
+        \mu_Y(t) = \mu_X(t) * h(t) = \mu_X * h(t)
+        \]
+        \item Cross-Correlation Function:
+        \[
+        R_{XY}(\tau) = R_{XX}(\tau) * h(\tau)
+        \]
+        \item Autocorrelation of the Output Process:
+        \[
+        R_{YY}(\tau) = R_{XY}(\tau) * h(-\tau) = R_{XX}(\tau) * h(\tau) * h(-\tau)
+        \]
+    \end{itemize}
+    \item Frequency Domain Representation:
+    \begin{itemize}
+        \item Fourier transform relates autocorrelation functions to power spectra:
+        \[
+        S_{YY}(\omega) = |H(\omega)|^2 S_{XX}(\omega)
+        \]
+    \end{itemize}
+\end{itemize}
+
+\subsection{Transfer Function and Spectrum}
+\begin{itemize}
+    \item The transfer function \( H(\omega) \) of the system is the Fourier transform of the impulse response \( h(t) \):
+    \[
+    H(\omega) = \int_{-\infty}^{\infty} h(t) e^{-j\omega t} \, dt
+    \]
+    \item The output power spectral density \( S_{YY}(\omega) \) is related to the input power spectral density \( S_{XX}(\omega) \) by:
+    \[
+    S_{YY}(\omega) = |H(\omega)|^2 S_{XX}(\omega)
+    \]
+    \item Note: The cross-spectrum \( S_{XY}(\omega) \) need not be real or nonnegative, but the output spectrum \( S_{YY}(\omega) \) is real and nonnegative.
+\end{itemize}
+
+\subsection{Example 5: Power Spectrum of Output through LTI System}
+\begin{example}[Power Spectrum of Output]
+A WSS white noise process \( W(t) \) with \( S_{WW}(\omega) = \sigma^2 \) is passed through a low-pass filter (LPF) with transfer function:
+\[
+H(\omega) = 
+\begin{cases}
+1 & |\omega| \leq B/2 \\
+0 & \text{otherwise}
+\end{cases}
+\]
+Find the autocorrelation function of the output process \( Y(t) \).
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item \textbf{Input PSD}:
+    \[
+    S_{WW}(\omega) = \sigma^2
+    \]
+    \item \textbf{Transfer Function of LPF}:
+    \[
+    H(\omega) = 
+    \begin{cases}
+    1 & |\omega| \leq B/2 \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+    \item \textbf{Output PSD}:
+    \[
+    S_{YY}(\omega) = |H(\omega)|^2 S_{WW}(\omega) = 
+    \begin{cases}
+    \sigma^2 & |\omega| \leq B/2 \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+    \item \textbf{Autocorrelation Function via IFT}:
+    \[
+    R_{YY}(\tau) = \frac{1}{2\pi} \int_{-\infty}^{\infty} S_{YY}(\omega) e^{j\omega \tau} \, d\omega = \frac{\sigma^2}{2\pi} \int_{-B/2}^{B/2} e^{j\omega \tau} \, d\omega
+    \]
+    \[
+    R_{YY}(\tau) = \frac{\sigma^2}{2\pi} \cdot \frac{2 \sin(B\tau/2)}{\tau} = \frac{\sigma^2}{\pi} \frac{\sin(B\tau/2)}{\tau} = \sigma^2 \cdot \text{sinc}\left(\frac{B\tau}{2\pi}\right)
+    \]
+    \item Therefore, the autocorrelation function of the output process \( Y(t) \) is:
+    \[
+    R_{YY}(\tau) = \sigma^2 \cdot \text{sinc}\left(\frac{B\tau}{2\pi}\right)
+    \]
+\end{itemize}
+\end{solution}
+
+\section{Fourier Transforms}
+
+\subsection{Definitions}
+\begin{itemize}
+    \item Fourier Transform (FT) of a function \( x(t) \):
+    \[
+    X(\omega) = \int_{-\infty}^{\infty} x(t) e^{-j\omega t} \, dt
+    \]
+    \item Inverse Fourier Transform (IFT):
+    \[
+    x(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} X(\omega) e^{j\omega t} \, d\omega
+    \]
+\end{itemize}
+
+\subsection{Properties of Fourier Transforms}
+\begin{itemize}
+    \item Linearity:
+    \[
+    \mathcal{F}\{a x(t) + b y(t)\} = a X(\omega) + b Y(\omega)
+    \]
+    \item Time Shifting:
+    \[
+    \mathcal{F}\{x(t - t_0)\} = X(\omega) e^{-j\omega t_0}
+    \]
+    \item Frequency Shifting:
+    \[
+    \mathcal{F}\{x(t) e^{j\omega_0 t}\} = X(\omega - \omega_0)
+    \]
+    \item Scaling:
+    \[
+    \mathcal{F}\{x(at)\} = \frac{1}{|a|} X\left(\frac{\omega}{a}\right)
+    \]
+    \item Conjugation:
+    \[
+    \mathcal{F}\{x^*(t)\} = X^*(-\omega)
+    \]
+    \item Duality:
+    \[
+    \mathcal{F}\{X(t)\} = 2\pi x(-\omega)
+    \]
+    \item Convolution:
+    \[
+    \mathcal{F}\{x(t) * y(t)\} = X(\omega) Y(\omega)
+    \]
+    \item Multiplication:
+    \[
+    \mathcal{F}\{x(t) y(t)\} = \frac{1}{2\pi} \left( X(\omega) * Y(\omega) \right)
+    \]
+    \item Parseval’s Theorem:
+    \[
+    \int_{-\infty}^{\infty} |x(t)|^2 \, dt = \frac{1}{2\pi} \int_{-\infty}^{\infty} |X(\omega)|^2 \, d\omega
+    \]
+\end{itemize}
+
+\subsection{Table of Important Fourier Transforms}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Function} & \textbf{Fourier Transform} & \textbf{Inverse FT} \\ \midrule
+Delta Function & \( \delta(t) \) & \( 1 \) \\
+Constant & \( 1 \) & \( 2\pi \delta(\omega) \) \\
+Rectangular Pulse & \( \text{rect}(t) \) & \( 2\pi \text{sinc}(\omega) \) \\
+Exponential Decay & \( e^{-at} u(t) \) & \( \frac{1}{a + j\omega} \) \\
+Cosine & \( \cos(\omega_0 t) \) & \( \pi [\delta(\omega - \omega_0) + \delta(\omega + \omega_0)] \) \\
+Sine & \( \sin(\omega_0 t) \) & \( j\pi [\delta(\omega - \omega_0) - \delta(\omega + \omega_0)] \) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Example 5: Fourier Transform Application}
+\begin{example}[Fourier Transform of a Sine Wave]
+Find the Fourier transform of \( x(t) = \sin(\omega_0 t) \).
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item Using Euler's formula:
+    \[
+    \sin(\omega_0 t) = \frac{e^{j\omega_0 t} - e^{-j\omega_0 t}}{2j}
+    \]
+    \item Fourier transform:
+    \[
+    \mathcal{F}\{\sin(\omega_0 t)\} = \frac{1}{2j} \left[ \mathcal{F}\{e^{j\omega_0 t}\} - \mathcal{F}\{e^{-j\omega_0 t}\} \right]
+    \]
+    \item Using the Fourier transform of exponentials:
+    \[
+    \mathcal{F}\{e^{j\omega_0 t}\} = 2\pi \delta(\omega - \omega_0)
+    \]
+    \[
+    \mathcal{F}\{e^{-j\omega_0 t}\} = 2\pi \delta(\omega + \omega_0)
+    \]
+    \item Substituting back:
+    \[
+    \mathcal{F}\{\sin(\omega_0 t)\} = \frac{1}{2j} \left[ 2\pi \delta(\omega - \omega_0) - 2\pi \delta(\omega + \omega_0) \right] = \pi \left[ \delta(\omega - \omega_0) - \delta(\omega + \omega_0) \right] \frac{1}{j}
+    \]
+    \item Simplifying using \( j = \sqrt{-1} \):
+    \[
+    \mathcal{F}\{\sin(\omega_0 t)\} = j\pi \left[ \delta(\omega + \omega_0) - \delta(\omega - \omega_0) \right]
+    \]
+\end{itemize}
+\end{solution}
+
+\subsection{Example 6: Inverse Fourier Transform Application}
+\begin{example}[Inverse Fourier Transform of a Rectangular Pulse]
+Find the inverse Fourier transform of \( X(\omega) = 2\pi \text{rect}\left(\frac{\omega}{2B}\right) \).
+\end{example}
+\begin{solution}
+\begin{itemize}
+    \item The inverse Fourier transform of \( X(\omega) = 2\pi \text{rect}\left(\frac{\omega}{2B}\right) \) is:
+    \[
+    x(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} 2\pi \text{rect}\left(\frac{\omega}{2B}\right) e^{j\omega t} \, d\omega = \int_{-\infty}^{\infty} \text{rect}\left(\frac{\omega}{2B}\right) e^{j\omega t} \, d\omega
+    \]
+    \item The rectangular function \( \text{rect}\left(\frac{\omega}{2B}\right) \) is defined as:
+    \[
+    \text{rect}\left(\frac{\omega}{2B}\right) = 
+    \begin{cases}
+    1 & |\omega| \leq B \\
+    0 & \text{otherwise}
+    \end{cases}
+    \]
+    \item Therefore:
+    \[
+    x(t) = \int_{-B}^{B} e^{j\omega t} \, d\omega = \frac{e^{jBt} - e^{-jBt}}{jt} = \frac{2\sin(Bt)}{t} = 2 \cdot \text{sinc}\left(\frac{Bt}{\pi}\right)
+    \]
+    \item Thus:
+    \[
+    x(t) = 2 \cdot \text{sinc}\left(\frac{Bt}{\pi}\right)
+    \]
+\end{itemize}
+\end{solution}
+
+\subsection{Fourier Transform Properties}
+\begin{itemize}
+    \item Linearity:
+    \[
+    \mathcal{F}\{a x(t) + b y(t)\} = a X(\omega) + b Y(\omega)
+    \]
+    \item Time Shifting:
+    \[
+    \mathcal{F}\{x(t - t_0)\} = X(\omega) e^{-j\omega t_0}
+    \]
+    \item Frequency Shifting:
+    \[
+    \mathcal{F}\{x(t) e^{j\omega_0 t}\} = X(\omega - \omega_0)
+    \]
+    \item Scaling:
+    \[
+    \mathcal{F}\{x(at)\} = \frac{1}{|a|} X\left(\frac{\omega}{a}\right)
+    \]
+    \item Conjugation:
+    \[
+    \mathcal{F}\{x^*(t)\} = X^*(-\omega)
+    \]
+    \item Duality:
+    \[
+    \mathcal{F}\{X(t)\} = 2\pi x(-\omega)
+    \]
+    \item Convolution:
+    \[
+    \mathcal{F}\{x(t) * y(t)\} = X(\omega) Y(\omega)
+    \]
+    \item Multiplication:
+    \[
+    \mathcal{F}\{x(t) y(t)\} = \frac{1}{2\pi} \left( X(\omega) * Y(\omega) \right)
+    \]
+    \item Parseval’s Theorem:
+    \[
+    \int_{-\infty}^{\infty} |x(t)|^2 \, dt = \frac{1}{2\pi} \int_{-\infty}^{\infty} |X(\omega)|^2 \, d\omega
+    \]
+\end{itemize}
+
+\section{Additional Formulas and Theorems}
+
+\subsection{Slutsky's Theorem}
+\begin{itemize}
+    \item Statement: If \( X_n \) converges in distribution to \( X \) and \( Y_n \) converges in probability to a constant \( c \), then:
+    \[
+    X_n + Y_n \xrightarrow{d} X + c
+    \]
+    \item Application in Ergodicity: While Slutsky's Theorem is a powerful tool in convergence of random variables, it is not directly applicable in establishing ergodicity in mean. Instead, ergodicity in mean relies on the autocovariance condition:
+    \[
+    \lim_{T \to \infty} \frac{1}{T} \int_{0}^{T} C(\tau) \, d\tau = 0
+    \]
+    where \( C(\tau) = R_{XX}(\tau) - \mu_X^2 \).
+\end{itemize}
+
+\subsection{Cauchy-Schwarz Inequality}
+\[
+|E[XY]| \leq \sqrt{E[X^2] E[Y^2]}
+\]
+\begin{itemize}
+    \item Equality Condition: Holds if and only if \( X \) and \( Y \) are linearly dependent.
+\end{itemize}
+
+\subsection{Covariance Matrix for Multivariate RVs}
+\[
+\Sigma = 
+\begin{pmatrix}
+\text{Var}(X) & \text{Cov}(X,Y) \\
+\text{Cov}(Y,X) & \text{Var}(Y)
+\end{pmatrix}
+\]
+
+\subsection{Transformation of Variables}
+\begin{itemize}
+    \item Single Variable Transformation:
+    \[
+    Y = g(X), \quad X = g^{-1}(Y)
+    \]
+    \[
+    f_Y(y) = f_X(g^{-1}(y)) \left| \frac{d}{dy} g^{-1}(y) \right|
+    \]
+    \item Multiple Variable Transformation:
+    \[
+    \mathbf{Y} = \mathbf{g}(\mathbf{X}), \quad \mathbf{X} = \mathbf{g}^{-1}(\mathbf{Y})
+    \]
+    \[
+    f_{\mathbf{Y}}(\mathbf{y}) = f_{\mathbf{X}}(\mathbf{g}^{-1}(\mathbf{y})) \left| \det J \right|
+    \]
+    where \( J \) is the Jacobian matrix of partial derivatives:
+    \[
+    J = 
+    \begin{pmatrix}
+    \frac{\partial x_1}{\partial y_1} & \cdots & \frac{\partial x_1}{\partial y_n} \\
+    \vdots & \ddots & \vdots \\
+    \frac{\partial x_n}{\partial y_1} & \cdots & \frac{\partial x_n}{\partial y_n}
+    \end{pmatrix}
+    \]
+\end{itemize}
+
+\section{Conclusion}
+
+This document provides an extensive overview of ergodic stochastic processes, stochastic analysis of LTI systems, and power spectrum analysis, enriched with detailed mathematical formulations, examples, and solutions. The correction of the ergodicity in mean section ensures accurate representation of the necessary and sufficient conditions without the incorrect application of Slutsky's Theorem. Additionally, the power formula includes the essential \( \frac{1}{2\pi} \) factor to maintain dimensional consistency and accuracy.
+
+For more in-depth explanations and proofs, refer to your course materials or standard textbooks on stochastic processes and signal analysis.
+
+\end{document}

@@ -1,0 +1,676 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{float}
+
+% Define new environments for examples and solutions
+\newtheorem{example}{Example}
+\newenvironment{solution}{\noindent\textbf{Solution:}}{\hfill$\square$}
+
+% Page settings
+\geometry{
+    a4paper,
+    total={170mm,257mm},
+    left=20mm,
+    top=20mm,
+}
+
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Stochastic Processes Lecture Notes}
+\fancyhead[R]{Week 04 - Fall 2024}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\href{https://stoch-sut.github.io/}{Course Website}}
+
+% Title formatting
+\title{
+    \vspace{-2cm}
+    \LARGE{Stochastic Processes} \\
+    \vspace{0.5cm}
+    \Large{Lecture Notes} \\
+    \vspace{0.5cm}
+    \normalsize{Week 04: Poisson Processes}
+}
+\author{
+    Payam Taebi \\
+    \vspace{0.2cm}
+    \normalsize{}
+}
+\date{
+    Fall 2024 \\
+    \vspace{0.2cm}
+    \href{https://stoch-sut.github.io/}{https://stoch-sut.github.io/}
+}
+
+% Section formatting for better readability
+\titleformat{\section}
+  {\Large\bfseries}{\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\large\bfseries}{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\bfseries}{\thesubsubsection}{1em}{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction to Poisson Processes}
+
+\subsection{Outline of Week 04 Lectures}
+\begin{itemize}
+    \item Poisson Process
+    \item Point Process (Ignored as per instructions)
+\end{itemize}
+
+\section{Binomial and Poisson Distributions}
+
+\subsection{Binomial Distribution}
+\begin{itemize}
+    \item A random variable \( X \) follows a Binomial distribution with parameters \( n \) and \( p \), denoted as \( X \sim \text{Binomial}(n, p) \), if:
+    \[
+    P(X = k) = \binom{n}{k} p^k (1 - p)^{n - k}, \quad k = 0, 1, 2, \ldots, n
+    \]
+    \item This represents the probability of exactly \( k \) successes in \( n \) independent Bernoulli trials with success probability \( p \).
+\end{itemize}
+
+\subsection{Relation to Poisson Distribution}
+\begin{itemize}
+    \item The Poisson distribution can be derived as the limiting case of the Binomial distribution when:
+    \[
+    n \to \infty, \quad \text{and} \quad \lambda = n p \quad \text{remains constant}
+    \]
+    \item Under these conditions, \( X \sim \text{Binomial}(n, p) \) converges to \( X \sim \text{Poisson}(\lambda) \).
+\end{itemize}
+
+\begin{example}[Poisson Approximation of Binomial]
+    \textbf{Poisson Approximation of Binomial Random Variables}
+    
+    \textbf{Problem:} Show that as \( n \to \infty \) and \( p \to 0 \) such that \( \lambda = n p \) remains constant, the Binomial distribution \( \text{Binomial}(n, p) \) converges to the Poisson distribution \( \text{Poisson}(\lambda) \).
+\end{example}
+\begin{solution}
+\begin{align*}
+    \lim_{n \to \infty} P(X = k) &= \lim_{n \to \infty} \binom{n}{k} p^k (1 - p)^{n - k} \\
+    &= \lim_{n \to \infty} \frac{n!}{k! (n - k)!} p^k (1 - p)^{n} (1 - p)^{-k} \\
+    &\approx \lim_{n \to \infty} \frac{n^k}{k!} p^k e^{-\lambda} \quad (\text{using } (1 - p)^n \approx e^{-\lambda}) \\
+    &= \frac{\lambda^k}{k!} e^{-\lambda} \\
+    &= P(Y = k), \quad Y \sim \text{Poisson}(\lambda)
+\end{align*}
+Thus, \( X \sim \text{Binomial}(n, p) \) converges to \( Y \sim \text{Poisson}(\lambda) \) as \( n \to \infty \) and \( p \to 0 \) with \( \lambda = n p \) constant.
+\end{solution}
+
+\section{Poisson Processes}
+
+\subsection{Definition of a Poisson Process}
+A stochastic process \( X(t) = n(0, t) \) represents a \textit{Poisson process} if it satisfies the following properties:
+
+\begin{enumerate}
+    \item \textit{Independent Increments:} The number of arrivals \( n(t_1, t_2) \) in the interval \( (t_1, t_2) \) of length \( \tau = t_2 - t_1 \) is a Poisson random variable with parameter \( \lambda \tau \), where \( \lambda > 0 \) is the rate parameter.
+    \[
+    P(n(t_1, t_2) = k) = \frac{(\lambda \tau)^k e^{-\lambda \tau}}{k!}, \quad k = 0, 1, 2, \ldots
+    \]
+    
+    \item \textit{Stationary Increments:} The number of arrivals in any interval of length \( \tau \) depends only on \( \tau \) and not on the location of the interval on the time axis.
+    
+    \item \textit{No Multiple Events:} In any infinitesimally small interval \( (t, t + dt) \), at most one arrival can occur. The probability of more than one arrival in such an interval is negligible.
+\end{enumerate}
+
+\subsection{Properties of Poisson Processes}
+\begin{itemize}
+    \item \textit{Mean and Variance:}
+    \[
+    E[X(t)] = \lambda t
+    \]
+    \[
+    \text{Var}(X(t)) = \lambda t
+    \]
+    
+    \item \textit{Autocorrelation Function:} For \( t_2 > t_1 \),
+    \[
+    R_{XX}(t_1, t_2) = \lambda^2 t_1 t_2 + \lambda \min(t_1, t_2)
+    \]
+    
+    \item \textit{Autocorrelation Simplification:}
+    \[
+    R_{XX}(t_1, t_2) = \lambda^2 t_1 t_2 + \lambda \min(t_1, t_2)
+    \]
+\end{itemize}
+
+\subsection{Autocorrelation Function Derivation}
+To determine the autocorrelation function \( R_{XX}(t_1, t_2) \), assume without loss of generality that \( t_2 > t_1 \). Then, from the properties of the Poisson process:
+\[
+X(t_1) = n(0, t_1) \quad \text{and} \quad X(t_2) = n(0, t_2)
+\]
+\[
+n(t_1, t_2) = X(t_2) - X(t_1)
+\]
+Since \( n(0, t_1) \) and \( n(t_1, t_2) \) are independent Poisson random variables with parameters \( \lambda t_1 \) and \( \lambda (t_2 - t_1) \), respectively:
+\[
+E[n(0, t_1) \cdot n(t_1, t_2)] = E[n(0, t_1)] \cdot E[n(t_1, t_2)] = \lambda t_1 \cdot \lambda (t_2 - t_1) = \lambda^2 t_1 (t_2 - t_1)
+\]
+
+The autocorrelation function is:
+\[
+R_{XX}(t_1, t_2) = E[X(t_1) X(t_2)] = E\left[ n(0, t_1) (n(0, t_1) + n(t_1, t_2)) \right]
+\]
+\[
+= E[n(0, t_1)^2] + E[n(0, t_1) n(t_1, t_2)]
+\]
+\[
+= \text{Var}(n(0, t_1)) + [E(n(0, t_1))]^2 + \lambda^2 t_1 (t_2 - t_1)
+\]
+\[
+= \lambda t_1 + (\lambda t_1)^2 + \lambda^2 t_1 (t_2 - t_1)
+\]
+\[
+= \lambda^2 t_1 t_2 + \lambda t_1
+\]
+
+Similarly, for \( t_1 > t_2 \):
+\[
+R_{XX}(t_1, t_2) = \lambda^2 t_1 t_2 + \lambda t_2
+\]
+
+Thus, combining both cases:
+\[
+R_{XX}(t_1, t_2) = \lambda^2 t_1 t_2 + \lambda \min(t_1, t_2)
+\]
+
+\begin{example}[Autocorrelation Function of a Poisson Process]
+    \textbf{Problem:} Derive the autocorrelation function \( R_{XX}(t_1, t_2) \) for a Poisson process \( X(t) \) with rate \( \lambda \).
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item Assume \( t_2 > t_1 \).
+        \item Using the definition of autocorrelation:
+        \[
+        R_{XX}(t_1, t_2) = E[X(t_1) X(t_2)]
+        \]
+        \item Since \( X(t_2) = X(t_1) + n(t_1, t_2) \), where \( n(t_1, t_2) \sim \text{Poisson}(\lambda (t_2 - t_1)) \) and independent of \( X(t_1) \):
+        \[
+        R_{XX}(t_1, t_2) = E[X(t_1)^2] + E[X(t_1)] E[n(t_1, t_2)]
+        \]
+        \item For a Poisson random variable \( n \) with parameter \( \lambda t \):
+        \[
+        E[n] = \lambda t \quad \text{and} \quad \text{Var}(n) = \lambda t
+        \]
+        \[
+        E[n^2] = \text{Var}(n) + [E(n)]^2 = \lambda t + (\lambda t)^2
+        \]
+        \item Therefore:
+        \[
+        R_{XX}(t_1, t_2) = (\lambda t_1 + (\lambda t_1)^2) + \lambda t_1 \cdot \lambda (t_2 - t_1)
+        \]
+        \[
+        = \lambda^2 t_1 t_2 + \lambda t_1
+        \]
+        \item Thus, the autocorrelation function is:
+        \[
+        R_{XX}(t_1, t_2) = \lambda^2 t_1 t_2 + \lambda \min(t_1, t_2)
+        \]
+    \end{itemize}
+\end{example}
+
+\section{Poisson Distribution vs. Poisson Processes}
+
+\subsection{Poisson Distribution}
+\begin{itemize}
+    \item A \textit{Poisson distribution} is a discrete probability distribution that expresses the probability of a given number of events \( k \) occurring in a fixed interval of time or space.
+    \item \textit{Characteristics:}
+    \begin{itemize}
+        \item Events occur with a known constant mean rate \( \lambda \).
+        \item Events occur independently of the time since the last event.
+    \end{itemize}
+    \item \textit{Example:} The number of emails received in an hour can be modeled using a Poisson distribution if emails arrive independently and at a constant average rate.
+\end{itemize}
+
+\subsection{Poisson Process}
+\begin{itemize}
+    \item A \textit{Poisson process} is a stochastic process that models a series of events occurring randomly over time or space.
+    \item \textit{Characteristics:}
+    \begin{itemize}
+        \item Events occur independently.
+        \item The average rate \( \lambda \) of events is constant over time.
+        \item The number of events in non-overlapping intervals are independent.
+        \item The time between consecutive events follows an exponential distribution.
+    \end{itemize}
+    \item \textit{Example:} The arrival of customers at a bank can be modeled as a Poisson process if the arrivals are independent and occur at a constant average rate.
+\end{itemize}
+
+\section{Autocorrelation Function Example}
+
+\begin{example}[Autocorrelation of Poisson Process]
+    \textbf{Problem:} Given a Poisson process \( X(t) \) with rate \( \lambda \), derive the autocorrelation function \( R_{XX}(t_1, t_2) \).
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item Assume \( t_2 > t_1 \).
+        \item \( X(t_1) = n(0, t_1) \) and \( X(t_2) = n(0, t_2) = n(0, t_1) + n(t_1, t_2) \).
+        \item Since \( n(0, t_1) \) and \( n(t_1, t_2) \) are independent Poisson random variables with parameters \( \lambda t_1 \) and \( \lambda (t_2 - t_1) \), respectively:
+        \[
+        R_{XX}(t_1, t_2) = E[X(t_1) X(t_2)] = E\left[ n(0, t_1) (n(0, t_1) + n(t_1, t_2)) \right]
+        \]
+        \[
+        = E[n(0, t_1)^2] + E[n(0, t_1)] E[n(t_1, t_2)]
+        \]
+        \[
+        = \lambda t_1 + (\lambda t_1)^2 + \lambda^2 t_1 (t_2 - t_1)
+        \]
+        \[
+        = \lambda^2 t_1 t_2 + \lambda t_1
+        \]
+        \item Therefore, the autocorrelation function is:
+        \[
+        R_{XX}(t_1, t_2) = \lambda^2 t_1 t_2 + \lambda \min(t_1, t_2)
+        \]
+    \end{itemize}
+\end{example}
+
+\section{Inter-arrival Distribution for Poisson Processes}
+
+\subsection{Exponential Distribution of Inter-arrival Times}
+\begin{itemize}
+    \item Let \( \tau \) denote the time interval (delay) to the first arrival from a fixed point \( t_0 \). The probability distribution of \( \tau \) is:
+    \[
+    P(\tau > t) = P(n(t_0, t_0 + t) = 0) = e^{-\lambda t}
+    \]
+    \item The cumulative distribution function (CDF) of \( \tau \) is:
+    \[
+    F_{\tau}(t) = 1 - e^{-\lambda t}, \quad t \geq 0
+    \]
+    \item The probability density function (PDF) of \( \tau \) is:
+    \[
+    f_{\tau}(t) = \frac{d}{dt} F_{\tau}(t) = \lambda e^{-\lambda t}, \quad t \geq 0
+    \]
+    \item Thus, \( \tau \) is an exponential random variable with parameter \( \lambda \):
+    \[
+    \tau \sim \text{Exponential}(\lambda)
+    \]
+    \item \textit{Expectation:}
+    \[
+    E[\tau] = \frac{1}{\lambda}
+    \]
+\end{itemize}
+
+\begin{example}[Inter-arrival Times]
+    \textbf{Problem:} Show that the inter-arrival times of a Poisson process \( X(t) \) with rate \( \lambda \) are independent exponential random variables with parameter \( \lambda \).
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item For the first inter-arrival time \( \tau_1 \):
+        \[
+        P(\tau_1 > t) = P(X(t) = 0) = e^{-\lambda t}
+        \]
+        \[
+        F_{\tau_1}(t) = 1 - e^{-\lambda t}
+        \]
+        \[
+        f_{\tau_1}(t) = \lambda e^{-\lambda t}
+        \]
+        
+        \item For the \( n \)-th inter-arrival time \( \tau_n \), given the Poisson process has no memory:
+        \[
+        P(\tau_n > t \mid \text{history}) = P(X(t_0, t_0 + t) = 0) = e^{-\lambda t}
+        \]
+        \[
+        f_{\tau_n}(t) = \lambda e^{-\lambda t}
+        \]
+        
+        \item Thus, all inter-arrival times \( \tau_1, \tau_2, \ldots \) are independent and identically distributed exponential random variables with parameter \( \lambda \).
+    \end{itemize}
+\end{example}
+
+\subsection{Gamma Distribution of Waiting Times}
+\begin{itemize}
+    \item The waiting time until the \( n \)-th arrival in a Poisson process follows a \textit{Gamma distribution}.
+    \item Specifically, if \( T_n \) is the time until the \( n \)-th arrival, then:
+    \[
+    T_n \sim \text{Gamma}(n, \lambda)
+    \]
+    where the Gamma distribution has shape parameter \( n \) and rate parameter \( \lambda \).
+    \item \textit{Probability Density Function (PDF):}
+    \[
+    f_{T_n}(t) = \frac{\lambda^n t^{n-1} e^{-\lambda t}}{(n-1)!}, \quad t \geq 0
+    \]
+    \item \textit{Expectation:}
+    \[
+    E[T_n] = \frac{n}{\lambda}
+    \]
+    \item \textit{Variance:}
+    \[
+    \text{Var}(T_n) = \frac{n}{\lambda^2}
+    \]
+\end{itemize}
+
+\begin{example}[Waiting Time Until \( n \)-th Arrival]
+    \textbf{Problem:} Show that the waiting time \( T_n \) until the \( n \)-th arrival in a Poisson process \( X(t) \) with rate \( \lambda \) follows a Gamma distribution with parameters \( n \) and \( \lambda \).
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item The waiting time \( T_n \) is the sum of \( n \) independent inter-arrival times \( \tau_1, \tau_2, \ldots, \tau_n \), each exponentially distributed with parameter \( \lambda \):
+        \[
+        T_n = \tau_1 + \tau_2 + \cdots + \tau_n
+        \]
+        \item The sum of \( n \) independent exponential random variables with parameter \( \lambda \) follows a Gamma distribution with shape parameter \( n \) and rate parameter \( \lambda \):
+        \[
+        T_n \sim \text{Gamma}(n, \lambda)
+        \]
+        \item The PDF of \( T_n \) is:
+        \[
+        f_{T_n}(t) = \frac{\lambda^n t^{n-1} e^{-\lambda t}}{(n-1)!}, \quad t \geq 0
+        \]
+        \item Therefore, \( T_n \) follows a Gamma distribution with parameters \( n \) and \( \lambda \).
+    \end{itemize}
+\end{example}
+
+\subsection{Properties of Gamma Distribution in Poisson Processes}
+\begin{itemize}
+    \item \textit{Sum of Independent Exponentials:} As the inter-arrival times \( \tau_i \) are independent and exponentially distributed, their sum \( T_n \) follows a Gamma distribution.
+    \item \textit{Memoryless Property:} While individual inter-arrival times are memoryless, the sum \( T_n \) does not possess the memoryless property unless \( n = 1 \).
+\end{itemize}
+
+\section{Sum of Independent Poisson Processes}
+
+\subsection{Properties}
+\begin{itemize}
+    \item If \( X_1(t) \) and \( X_2(t) \) are two independent Poisson processes with rates \( \lambda_1 \) and \( \lambda_2 \), respectively, then their sum \( X(t) = X_1(t) + X_2(t) \) is also a Poisson process with rate \( \lambda = \lambda_1 + \lambda_2 \).
+    \item \textit{Proof:}
+    \[
+    P(X(t) = k) = \sum_{m=0}^{k} P(X_1(t) = m) P(X_2(t) = k - m)
+    \]
+    \[
+    = \sum_{m=0}^{k} \frac{(\lambda_1 t)^m e^{-\lambda_1 t}}{m!} \cdot \frac{(\lambda_2 t)^{k - m} e^{-\lambda_2 t}}{(k - m)!}
+    \]
+    \[
+    = e^{-(\lambda_1 + \lambda_2)t} \frac{(\lambda_1 + \lambda_2)^k t^k}{k!} \quad \text{where } \lambda = \lambda_1 + \lambda_2
+    \]
+    \[
+    = \frac{(\lambda t)^k e^{-\lambda t}}{k!}
+    \]
+    \item Thus, \( X(t) \sim \text{Poisson}(\lambda t) \).
+\end{itemize}
+
+\begin{example}[Sum of Independent Poisson Processes]
+    \textbf{Problem:} If \( X_1(t) \sim \text{Poisson}(\lambda_1 t) \) and \( X_2(t) \sim \text{Poisson}(\lambda_2 t) \) are independent, show that \( X(t) = X_1(t) + X_2(t) \sim \text{Poisson}((\lambda_1 + \lambda_2) t) \).
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item Using the properties of Poisson distributions and independence:
+        \[
+        P(X(t) = k) = \sum_{m=0}^{k} P(X_1(t) = m) P(X_2(t) = k - m)
+        \]
+        \[
+        = \sum_{m=0}^{k} \frac{(\lambda_1 t)^m e^{-\lambda_1 t}}{m!} \cdot \frac{(\lambda_2 t)^{k - m} e^{-\lambda_2 t}}{(k - m)!}
+        \]
+        \[
+        = e^{-(\lambda_1 + \lambda_2)t} \sum_{m=0}^{k} \frac{(\lambda_1 t)^m (\lambda_2 t)^{k - m}}{m! (k - m)!}
+        \]
+        \[
+        = e^{-\lambda t} \frac{(\lambda_1 + \lambda_2)^k t^k}{k!} \quad \text{where } \lambda = \lambda_1 + \lambda_2
+        \]
+        \item Hence, \( X(t) \sim \text{Poisson}(\lambda t) \).
+    \end{itemize}
+\end{example}
+
+\section{Random Selection of Poisson Points}
+
+\subsection{Splitting a Poisson Process}
+\begin{itemize}
+    \item Consider a Poisson process \( X(t) \) with rate \( \lambda \). Suppose each arrival in \( X(t) \) is independently assigned to one of two new Poisson processes \( Y(t) \) and \( Z(t) \) with probabilities \( p \) and \( q = 1 - p \), respectively.
+    \item \textit{Result:} Both \( Y(t) \) and \( Z(t) \) are independent Poisson processes with rates \( \lambda p \) and \( \lambda q \), respectively.
+\end{itemize}
+
+\begin{example}[Splitting Poisson Processes]
+    \textbf{Problem:} Let \( X(t) \sim \text{Poisson}(\lambda t) \). Each arrival is independently assigned to \( Y(t) \) with probability \( p \) and to \( Z(t) \) with probability \( q = 1 - p \). Show that \( Y(t) \sim \text{Poisson}(\lambda p t) \) and \( Z(t) \sim \text{Poisson}(\lambda q t) \), and that \( Y(t) \) and \( Z(t) \) are independent.
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item Given \( X(t) = n \), the number of arrivals in \( Y(t) \) follows a Binomial distribution:
+        \[
+        Y(t) \mid X(t) = n \sim \text{Binomial}(n, p)
+        \]
+        \item Using the Poisson approximation of the Binomial distribution as \( n \to \infty \) and \( p \to 0 \) with \( \lambda p \) constant, we have:
+        \[
+        Y(t) \mid X(t) = n \approx \text{Poisson}(\lambda p t)
+        \]
+        \item Since each arrival is independently assigned, \( Y(t) \) and \( Z(t) \) are independent.
+        \item Therefore, \( Y(t) \sim \text{Poisson}(\lambda p t) \) and \( Z(t) \sim \text{Poisson}(\lambda q t) \).
+    \end{itemize}
+\end{example}
+
+\section{Coupon Collecting Example}
+
+\subsection{Problem Statement}
+\begin{itemize}
+    \item Suppose a cereal manufacturer randomly inserts a sample of one type of coupon into each cereal box. There are \( n \) distinct types of coupons. The question is: How many boxes of cereal should one buy on average to collect at least one coupon of each kind?
+\end{itemize}
+
+\subsection{Reformulation Using Poisson Processes}
+\begin{itemize}
+    \item Let \( X_i(t) \) for \( i = 1, 2, \ldots, n \) represent \( n \) independent Poisson processes with a common rate \( \lambda \).
+    \item Let \( T_i \) be the time of the first arrival in \( X_i(t) \). Then, \( T_i \sim \text{Exponential}(\lambda) \).
+    \item The waiting time until the first coupon of each type is collected corresponds to the maximum of these inter-arrival times.
+\end{itemize}
+
+\begin{example}[Coupon Collecting Using Poisson Processes]
+    \textbf{Problem:} Reformulate the coupon collecting problem in terms of Poisson processes and determine the expected number of cereal boxes one needs to buy to collect at least one of each type of coupon.
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item Consider \( n \) independent Poisson processes \( X_i(t) \) with rate \( \lambda \) each, representing the arrivals of coupons of type \( i \).
+        \item The time until the first coupon of type \( i \) is collected is \( T_i \sim \text{Exponential}(\lambda) \).
+        \item The time until all coupons are collected is \( T = \max(T_1, T_2, \ldots, T_n) \).
+        \item The expected time until all coupons are collected is given by:
+        \[
+        E[T] = \sum_{i=1}^{n} \frac{1}{\lambda i}
+        \]
+        \item Therefore, the expected number of cereal boxes to buy (assuming one box per unit time) is:
+        \[
+        E[T] = \frac{1}{\lambda} \sum_{i=1}^{n} \frac{1}{i}
+        \]
+        \item This is analogous to the classic coupon collector's problem where:
+        \[
+        E[T] = \frac{n}{\lambda} \sum_{i=1}^{n} \frac{1}{i} = \frac{n}{\lambda} H_n
+        \]
+        where \( H_n \) is the \( n \)-th harmonic number.
+    \end{itemize}
+\end{example}
+
+\section{Compound Poisson Processes}
+
+\subsection{Definition}
+\begin{itemize}
+    \item A \textit{Compound Poisson Process} \( X(t) \) is defined as the sum of random variables associated with each arrival in a Poisson process. Formally:
+    \[
+    X(t) = \sum_{i=1}^{N(t)} C_i
+    \]
+    where:
+    \begin{itemize}
+        \item \( N(t) \) is a Poisson process with rate \( \lambda \).
+        \item \( C_i \) are independent and identically distributed (i.i.d.) random variables representing the "marks" or "sizes" associated with each event.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Properties}
+\begin{itemize}
+    \item \textit{Mean:}
+    \[
+    E[X(t)] = E[N(t)] E[C] = \lambda t E[C]
+    \]
+    
+    \item \textit{Variance:}
+    \[
+    \text{Var}(X(t)) = \lambda t E[C^2]
+    \]
+    
+    \item \textit{Autocorrelation Function:}
+    \[
+    R_{XX}(t_1, t_2) = \lambda^2 t_1 t_2 E[C]^2 + \lambda \min(t_1, t_2) E[C^2]
+    \]
+\end{itemize}
+
+\begin{example}[Compound Poisson Process]
+    \textbf{Problem:} Let \( X(t) \) be a compound Poisson process with rate \( \lambda \) and i.i.d. marks \( C_i \) having mean \( \mu_C \) and variance \( \sigma_C^2 \). Derive the mean and variance of \( X(t) \).
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item \textit{Mean:}
+        \[
+        E[X(t)] = E\left[ \sum_{i=1}^{N(t)} C_i \right] = E[N(t)] E[C] = \lambda t \mu_C
+        \]
+        
+        \item \textit{Variance:}
+        \[
+        \text{Var}(X(t)) = E[X(t)^2] - [E(X(t))]^2
+        \]
+        \[
+        E[X(t)^2] = E\left[ \left( \sum_{i=1}^{N(t)} C_i \right)^2 \right] = E\left[ \sum_{i=1}^{N(t)} C_i^2 + \sum_{i \neq j} C_i C_j \right]
+        \]
+        \[
+        = E[N(t)] E[C^2] + [E[N(t)^2] - E[N(t)}] [E[C]]^2
+        \]
+        \[
+        = \lambda t E[C^2] + (\lambda t)^2 \mu_C^2
+        \]
+        \[
+        \text{Var}(X(t)) = E[X(t)^2] - [E(X(t))]^2 = \lambda t E[C^2] + (\lambda t)^2 \mu_C^2 - (\lambda t \mu_C)^2
+        \]
+        \[
+        = \lambda t E[C^2] = \lambda t (\sigma_C^2 + \mu_C^2)
+        \]
+    \end{itemize}
+\end{example}
+
+\subsection{Gamma Distribution in Compound Poisson Processes}
+\begin{itemize}
+    \item The waiting time until the \( n \)-th arrival in a Poisson process follows a \textit{Gamma distribution}.
+    \item Specifically, if \( T_n \) is the time until the \( n \)-th arrival, then:
+    \[
+    T_n \sim \text{Gamma}(n, \lambda)
+    \]
+    where the Gamma distribution has shape parameter \( n \) and rate parameter \( \lambda \).
+\end{itemize}
+
+\section{Bulk Arrivals and Compound Poisson Processes}
+
+\subsection{Definition}
+\begin{itemize}
+    \item In some scenarios, multiple events can occur simultaneously as a cluster at each arrival instant of a Poisson process. Such processes are called \textit{Compound Poisson Processes} or \textit{Bulk Arrival Processes}.
+    \item \textit{Definition:} Let \( X(t) \) represent the total number of all occurrences in the interval \( (0, t) \). Then:
+    \[
+    X(t) = \sum_{i=1}^{N(t)} C_i
+    \]
+    where \( N(t) \sim \text{Poisson}(\lambda t) \) and \( C_i \) are the number of events in each cluster.
+\end{itemize}
+
+\subsection{Applications}
+\begin{itemize}
+    \item Inventory orders
+    \item Arrivals at an airport queue
+    \item Ticket purchases for a show
+    \item Any scenario where events occur in batches or clusters
+\end{itemize}
+
+\section{Fitting and Sampling from Poisson Processes}
+
+\subsection{Fitting by Maximum Likelihood}
+\begin{itemize}
+    \item The maximum likelihood estimation (MLE) for the rate \( \lambda \) of a Poisson process given observed data is straightforward.
+    \item Given \( N \) observations \( \{ t_1, t_2, \ldots, t_N \} \) within a time interval \( [0, T] \):
+    \[
+    L(\lambda) = P(N(T) = N) = \frac{(\lambda T)^N e^{-\lambda T}}{N!}
+    \]
+    \item Taking the natural logarithm:
+    \[
+    \log L(\lambda) = N \log(\lambda T) - \lambda T - \log(N!)
+    \]
+    \item Differentiating and setting to zero:
+    \[
+    \frac{d}{d\lambda} \log L(\lambda) = \frac{N}{\lambda} - T = 0 \Rightarrow \hat{\lambda} = \frac{N}{T}
+    \]
+\end{itemize}
+
+\subsection{Sampling Using Inversion Sampling}
+\begin{itemize}
+    \item \textit{Inversion Sampling:} A method to generate random samples from any probability distribution given its cumulative distribution function (CDF).
+    \item \textit{Steps:}
+    \begin{enumerate}
+        \item Generate a uniform random sample \( u \) from \( U(0, 1) \).
+        \item Use the inverse CDF \( F^{-1}(u) \) to obtain the sample from the target distribution.
+    \end{enumerate}
+\end{itemize}
+
+\subsection{Rejection Sampling (Thinning)}
+\begin{itemize}
+    \item \textit{Rejection Sampling:} Also known as the acceptance-rejection method, used to generate observations from a target distribution by using a proposal distribution.
+    \item \textit{Steps:}
+    \begin{enumerate}
+        \item Choose a proposal distribution \( g(x) \) from which it is easy to sample and covers the support of the target distribution \( f(x) \).
+        \item Generate a sample \( x \) from \( g(x) \).
+        \item Generate a uniform random variable \( u \sim U(0, 1) \).
+        \item Accept the sample \( x \) if \( u \leq \frac{f(x)}{M g(x)} \), where \( M \) is a constant such that \( f(x) \leq M g(x) \) for all \( x \).
+        \item Repeat until a sample is accepted.
+    \end{enumerate}
+\end{itemize}
+
+\begin{example}[Sampling from an Exponential Distribution]
+    \textbf{Problem:} Use inversion sampling to generate a sample from an Exponential distribution with parameter \( \lambda \).
+    
+    \textbf{Solution:}
+    \begin{itemize}
+        \item Generate \( u \sim U(0, 1) \).
+        \item Use the inverse CDF of the Exponential distribution:
+        \[
+        F^{-1}(u) = -\frac{1}{\lambda} \ln(1 - u)
+        \]
+        \item Since \( 1 - u \sim U(0, 1) \), we can simplify:
+        \[
+        X = -\frac{1}{\lambda} \ln(u)
+        \]
+        \item Thus, \( X \sim \text{Exponential}(\lambda) \).
+    \end{itemize}
+\end{example}
+
+\section{Summary of Poisson Processes}
+
+\begin{itemize}
+    \item \textit{Definition:} A Poisson process \( X(t) \) with rate \( \lambda \) is a counting process with independent and stationary increments, where \( X(t) \sim \text{Poisson}(\lambda t) \).
+    
+    \item \textit{Properties:}
+    \begin{itemize}
+        \item \( E[X(t)] = \lambda t \)
+        \item \( \text{Var}(X(t)) = \lambda t \)
+        \item Autocorrelation function:
+        \[
+        R_{XX}(t_1, t_2) = \lambda^2 t_1 t_2 + \lambda \min(t_1, t_2)
+        \]
+    \end{itemize}
+    
+    \item \textit{Inter-arrival Times:} The time between consecutive arrivals follows an exponential distribution with parameter \( \lambda \). The waiting time until the \( n \)-th arrival follows a Gamma distribution with parameters \( n \) and \( \lambda \).
+    
+    \item \textit{Compound Poisson Processes:} Sum of random variables associated with each arrival, leading to more complex stochastic models.
+    
+    \item \textit{Sum of Independent Poisson Processes:} If \( X_1(t) \) and \( X_2(t) \) are independent Poisson processes with rates \( \lambda_1 \) and \( \lambda_2 \), then \( X(t) = X_1(t) + X_2(t) \) is a Poisson process with rate \( \lambda = \lambda_1 + \lambda_2 \).
+    
+    \item \textit{Splitting Poisson Processes:} Randomly splitting a Poisson process into independent Poisson processes based on a Bernoulli trial preserves the Poisson property.
+\end{itemize}
+
+\section{Conclusion}
+
+This document provides a detailed overview of **Poisson Processes**, including their definition, properties, relation to the Poisson distribution, autocorrelation function, inter-arrival times with Gamma distribution, compound Poisson processes, and the sum of independent Poisson processes. Comprehensive examples and solutions are included to illustrate key concepts and derivations.
+
+For further reading and more in-depth explanations, refer to standard textbooks on stochastic processes or your course materials.
+
+\end{document}
